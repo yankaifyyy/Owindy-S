@@ -1,4 +1,4 @@
 Owindy-S
 ========
 
-A little toy OS for study
+A little toy OS for study.
