@@ -125,8 +125,8 @@ is_odd			db		0
 ; strings
 loader_file_name	db		"LOADER  SYS", 0
 length_of_msg		equ		10					;Each str has same length, keep simple
-boot_msg			db		"   Booting"
-succeed_msg			db		"    OK!   "
+boot_msg			db		"Booting   "
+succeed_msg			db		"OK!       "
 no_loader_msg		db		"No Loader!"
 
 ; functions

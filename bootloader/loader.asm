@@ -176,8 +176,8 @@ kernel_size		dd		0
 ; strings
 kernel_file_name		db		"KERNEL  SYS"
 length_of_msg			equ		10
-loader_msg				db		"  Loading "
-succeed_msg				db		"  Ready!  "
+loader_msg				db		"Loading   "
+succeed_msg				db		"Ready!    "
 no_kernel_msg			db		"No Kernel!"
 
 ; functions
@@ -193,6 +193,7 @@ fun16_disp_str:
 				mov		ax, 1301h
 				mov		bx, 0007h
 				mov		dl, 0
+				add		dh, 3
 				int		10h
 				ret
 
@@ -350,7 +351,7 @@ fun32_disp_meminfo:
 fun32_setup_paging:
 				xor		edx, edx
 				mov		eax, [dwMemSize]
-				mov		ebx, 40000h
+				mov		ebx, 400000h
 				div		ebx
 				mov		ecx, eax
 				test	edx, edx
@@ -386,8 +387,7 @@ fun32_setup_paging:
 				mov		eax, cr0
 				or		eax, 80000000h
 				mov		cr0, eax
-				jmp		short .3
-.3:
+
 				nop
 				ret
 

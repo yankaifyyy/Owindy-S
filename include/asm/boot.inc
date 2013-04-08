@@ -7,17 +7,17 @@ BOOT_OFF			equ				0x07c0
 LOADER_SEG			equ				0x9000
 LOADER_OFF			equ				0x100
 
-LOADER_PHY_ADDR			equ				(LOADER_SEG << 4) + LOADER_OFF
+LOADER_PHY_ADDR		equ				(LOADER_SEG << 4) + LOADER_OFF
 
 KERNEL_SEG			equ				0x1000
 KERNEL_OFF			equ				0x0	
 
-KERNEL_ENTRY			equ				(KERNEL_SEG << 4) + KERNEL_OFF
+KERNEL_ENTRY		equ				(KERNEL_SEG << 4) + KERNEL_OFF
 
 STACK_TOP			equ				0x4000	; Because EBDA, but what is EBDA?
 
-PAGEDIR_BASE			equ				0x100000
-PAGETBL_BASE			equ				0x100010
+PAGEDIR_BASE		equ				0x200000
+PAGETBL_BASE		equ				0x201000
 
 ; Below is used for harddisk booter
 ; Notice that 0x5000 - 0x7bff is free, and the super block will be stored at 0x5000 - 0x7000
