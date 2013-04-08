@@ -4,6 +4,7 @@ LD =ld
 CFLAGS =-g -Wall -O2 -fomit-frame-pointer -m32
 LDFLAGS =-Ttext 0 -N -e _start --oformat binary -m elf_i386
 
+PWD = $(shell pwd)
 IMG :=a.img
 MOUNT_POINT :=./mount/
 
@@ -42,6 +43,11 @@ $(LDR_BIN) : bootloader/loader.asm include/asm/boot.inc include/asm/fat12.inc in
 
 $(KERNEL_BIN) :  lib
 	(cd kernel; make)
+
+purge : 
+	make clean
+	$(shell echo pwd)
+	rm .log .debugger.log
 
 clean :
 	sudo mount -o loop $(IMG) $(MOUNT_POINT)
