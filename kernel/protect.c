@@ -5,7 +5,7 @@
 //										wind4869, 2013/4/3
 //-----------------------------------------------------------
 
-#include "type.h"
+#include "util.h"
 #include "protect.h"
 #include "global.h"
 
@@ -44,8 +44,7 @@ void hwint14();
 void hwint15();
 
 PUBLIC void init_8259A();
-PUBLIC void out_byte(u16 port, u8 value);
-PRIVATE void init_idt_desc(unsigned char vector, u8 desc_type,
+PRIVATE void init_idt_desc(unsigned char vector, u8_t desc_type,
 			   int_handler handler, unsigned char privilege);
 
 PUBLIC void init_prot()
@@ -153,25 +152,25 @@ PUBLIC void init_prot()
 PUBLIC void init_8259A()
 {
 	//主片:ICW1 ICW2 ICW3 ICW4 OCW1
-	out_byte(0x20, 0x11);
-	out_byte(0x21, INT_VECTOR_IRQ0);
-	out_byte(0x21, 0x4);//IR2接从片
-	out_byte(0x21, 0x1);
-	out_byte(0x21, 0xFD);//打开键盘中断
+	outb(0x20, 0x11);
+	outb(0x21, INT_VECTOR_IRQ0);
+	outb(0x21, 0x4);//IR2接从片
+	outb(0x21, 0x1);
+	outb(0x21, 0xFD);//打开键盘中断
 
 	//从片
-	out_byte(0xA0, 0x11);
-	out_byte(0xA1, INT_VECTOR_IRQ8);
-	out_byte(0xA1, 0x2);//接主片的IR2
-	out_byte(0xA1, 0x1);
-	out_byte(0xA1, 0xFF);
+	outb(0xA0, 0x11);
+	outb(0xA1, INT_VECTOR_IRQ8);
+	outb(0xA1, 0x2);//接主片的IR2
+	outb(0xA1, 0x1);
+	outb(0xA1, 0xFF);
 }
 
-PRIVATE void init_idt_desc(unsigned char vector, u8 desc_type,
+PRIVATE void init_idt_desc(unsigned char vector, u8_t desc_type,
 			  int_handler handler, unsigned char privilege)
 {
 	GATE *p_gate = &idt[vector];
-	u32	base = (u32)handler;
+	u32_t	base = (u32_t)handler;
 	p_gate->offset_low	= base & 0xFFFF;
 	p_gate->selector	= SELECTOR_KERNEL_CS;
 	p_gate->param_count	= 0;

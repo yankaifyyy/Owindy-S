@@ -11,22 +11,22 @@
 //代码段/数据段描述符(8个字节)
 typedef struct descriptor
 {
-	u8	limit_low;
-	u16	base_low;
-	u8	base_mid;
-	u8	attr1;//P(1) DPL(2) S(1) TYPE(4)
-	u8	limit_high_attr2;//G(1) D(1) 0(1) AVL(1) light_high(4)
-	u8	base_high;
+	u8_t	limit_low;
+	u16_t	base_low;
+	u8_t	base_mid;
+	u8_t	attr1;//P(1) DPL(2) S(1) TYPE(4)
+	u8_t	limit_high_attr2;//G(1) D(1) 0(1) AVL(1) light_high(4)
+	u8_t	base_high;
 } DESCRIPTOR;
 
 //门描述符
 typedef struct gate
 {
-	u16 offset_low;
-	u16 selector;
-	u8 param_count;
-	u8 attr;//P(1) DPL(2) S(1) TYPE(4)
-	u16 offset_high;
+	u16_t offset_low;
+	u16_t selector;
+	u8_t param_count;
+	u8_t attr;//P(1) DPL(2) S(1) TYPE(4)
+	u16_t offset_high;
 } GATE;
 
 #define GDT_SIZE 128

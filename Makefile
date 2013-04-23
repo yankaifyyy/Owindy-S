@@ -1,7 +1,7 @@
 AS =nasm
 CC =gcc
 LD =ld
-CFLAGS =-g -Wall -O2 -fomit-frame-pointer -m32
+CFLAGS =-g -Wall -O2 -fomit-frame-pointer -m32 -std=gnu99 -I./include -c
 LDFLAGS =-Ttext 0 -N -e _start --oformat binary -m elf_i386
 
 PWD = $(shell pwd)

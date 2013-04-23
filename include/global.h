@@ -9,9 +9,9 @@
 #define _OWINDYS_GLOBAL_H_ 
 
 PUBLIC int disp_pos;
-PUBLIC u8 gdt_ptr[6];//0~15:limit, 16~47:base
+PUBLIC u8_t gdt_ptr[6];//0~15:limit, 16~47:base
 PUBLIC DESCRIPTOR gdt[GDT_SIZE];
-PUBLIC u8 idt_ptr[6];
+PUBLIC u8_t idt_ptr[6];
 PUBLIC GATE idt[IDT_SIZE];
 
 #endif
