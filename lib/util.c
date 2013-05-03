@@ -1,3 +1,4 @@
+#include "type.h"
 #include "util.h"
 
 PUBLIC char *strcat(char *dst, const char *src) {

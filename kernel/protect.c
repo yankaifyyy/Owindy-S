@@ -2,12 +2,15 @@
 //-----------------------------------------------------------
 //							protect.c
 //-----------------------------------------------------------
-//										wind4869, 2013/4/3
+//										     wind4869, 2013/4
 //-----------------------------------------------------------
 
-#include "util.h"
+#include "type.h"
 #include "protect.h"
+#include "proc.h"
 #include "global.h"
+#include "kernel.h"
+#include "util.h"
 
 void divide_error();
 void single_step_exception();
@@ -43,9 +46,7 @@ void hwint13();
 void hwint14();
 void hwint15();
 
-PUBLIC void init_8259A();
-PRIVATE void init_idt_desc(unsigned char vector, u8_t desc_type,
-			   int_handler handler, unsigned char privilege);
+void sys_call();
 
 PUBLIC void init_prot()
 {
@@ -147,6 +148,37 @@ PUBLIC void init_prot()
 	init_idt_desc(INT_VECTOR_IRQ8 + 7, DA_386IGate,
 			hwint15, PRIVILEGE_KRNL);
 
+	//初始化系统调用的中断门
+	init_idt_desc(INT_VECTOR_SYS_CALL, DA_386IGate,
+			sys_call, PRIVILEGE_USER);
+
+	// 填充 GDT 中 TSS 描述符 
+	tss.ss0	= SELECTOR_KERNEL_DS;
+	init_descriptor(&gdt[INDEX_TSS],
+			vir2phys(seg2phys(SELECTOR_KERNEL_DS), &tss),
+			sizeof(tss) - 1,
+			DA_386TSS);
+	tss.iobase = sizeof(tss);	/* 没有I/O许可位图 */
+
+	// 填充 GDT 中进程的 LDT 描述符
+	int i;
+	PROCESS* p_proc	= proc_table;
+	u16_t selector_ldt = INDEX_LDT_FIRST << 3;
+	for(i=0;i<NR_TASKS;i++){
+		init_descriptor(&gdt[selector_ldt>>3],
+				vir2phys(seg2phys(SELECTOR_KERNEL_DS),
+					proc_table[i].ldts),
+				LDT_SIZE * sizeof(DESCRIPTOR) - 1,
+				DA_LDT);
+		p_proc++;
+		selector_ldt += 1 << 3;
+	}
+}
+
+PUBLIC u32_t seg2phys(u16_t seg)
+{
+	DESCRIPTOR* p_dest = &gdt[seg >> 3];
+	return (p_dest->base_high << 24) | (p_dest->base_mid << 16) | (p_dest->base_low);
 }
 
 PUBLIC void init_8259A()
@@ -176,6 +208,17 @@ PRIVATE void init_idt_desc(unsigned char vector, u8_t desc_type,
 	p_gate->param_count	= 0;
 	p_gate->attr		= desc_type | (privilege << 5);
 	p_gate->offset_high	= (base >> 16) & 0xFFFF;
+}
+
+PRIVATE void init_descriptor(DESCRIPTOR * p_desc, u32_t base, u32_t limit, u16_t attribute)
+{
+	p_desc->limit_low = limit & 0x0FFFF;		// 段界限 1		(2 字节)
+	p_desc->base_low = base & 0x0FFFF;		// 段基址 1		(2 字节)
+	p_desc->base_mid = (base >> 16) & 0x0FF;		// 段基址 2		(1 字节)
+	p_desc->attr1 = attribute & 0xFF;		// 属性 1
+	p_desc->limit_high_attr2 = ((limit >> 16) & 0x0F) |
+							(attribute >> 8) & 0xF0;// 段界限 2 + 属性 2
+	p_desc->base_high = (base >> 24) & 0x0FF;		// 段基址 3		(1 字节)
 }
 
 PUBLIC void exception_handler(int vec_no, int err_code, int eip, int cs, int eflags)
@@ -208,11 +251,20 @@ PUBLIC void exception_handler(int vec_no, int err_code, int eip, int cs, int efl
 
 PUBLIC void spurious_irq(int irq)
 {
-	char output[2];
-	output[0] = '0' + irq;
-	output[1] = '\0';
+	char output[5];
+	output[0] = '0';
+	output[1] = 'x';
+	output[2] = '0' + irq / 10;
+	output[3] = '0' + irq % 10;
+	output[4] = '\0';
 
 	disp_str("spurious_irq: ");
 	disp_str(output);
 	disp_str("\n");
+}
+
+PUBLIC void put_irq_handler(int irq, irq_handler handler)
+{
+	disable_irq(irq);
+	irq_table[irq] = handler;
 }

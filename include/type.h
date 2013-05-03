@@ -38,12 +38,16 @@ static inline const char *bool_str(bool value) {
 typedef	unsigned int		u32_t;
 typedef	unsigned short		u16_t;
 typedef	unsigned char		u8_t;
-typedef unsigned int		size_t;
 typedef long long			s64_t;
 typedef unsigned long long	u64_t;
+typedef unsigned int		size_t;
 
 #define NULL (void*)0
 
+typedef void (*task_f) ();
 typedef	void (*int_handler)	();
+typedef void (*irq_handler) (int irq);
+
+typedef void* system_call;
 
 #endif 

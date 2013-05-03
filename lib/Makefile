@@ -6,13 +6,13 @@ CFLAGS =-g -Wall -O2 -fomit-frame-pointer -c -I../include -m32 -std=gnu99
 
 .PHONY : clean
 
-default : util.o string.o
+default : util.o alib.o
 
 util.o : util.c
 	$(CC) $< $(CFLAGS) -o util.o
 
-string.o : string.asm
-	$(AS) $< $(ASFLAGS) -o string.o
+alib.o : alib.asm
+	$(AS) $< $(ASFLAGS) -o alib.o
 
 clean :
 	rm *.o -f

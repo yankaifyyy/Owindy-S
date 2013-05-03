@@ -2,16 +2,15 @@
 //-----------------------------------------------------------------
 //							start.c
 //-----------------------------------------------------------------
-//											wind4869, 2013/4/2
+//											     wind4869, 2013/4/2
 //-----------------------------------------------------------------
 
 #include "type.h"
 #include "protect.h"
+#include "proc.h"
 #include "global.h"
+#include "kernel.h"
 #include "util.h"
-
-// PUBLIC void * memcpy(void *p_destination, void *p_source, int size);
-PUBLIC void disp_str(char *p_string);
 
 PUBLIC void cstart()
 {

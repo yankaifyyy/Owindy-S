@@ -1,7 +1,8 @@
 #ifndef _OWINDYS_UTIL_H_
 #define _OWINDYS_UTIL_H_
 
-#include "type.h"
+// 线性地址->物理地址转换的宏
+#define vir2phys(seg_base, vir)	(u32_t)(((u32_t)seg_base) + (u32_t)(vir))
 
 static inline u8_t inb(u16_t port) {
 	u8_t val;
@@ -46,19 +47,23 @@ static inline void wrmsr(u32_t msr, u64_t val) {
 		);
 }
 
-char *strcat(char *dst, const char *src);
-char *strcpy(char *dst, const char *src);
-size_t strlen(const char *str);
-char *strrev(char *str);
+PUBLIC void disp_str(char *pstr);
 
-void *memset(void *ptr, int value, size_t size);
-void *memcpy(void *dst, const void *src, size_t size);
-int memcmp(const void *buf1, const void *buf2, size_t size);
-void *memmem(const void *buf1, size_t size1, const void *buf2, size_t size2);
+PUBLIC char *strcat(char *dst, const char *src);
+PUBLIC char *strcpy(char *dst, const char *src);
+PUBLIC size_t strlen(const char *str);
+PUBLIC char *strrev(char *str);
 
-char *ultoa(unsigned long val, char *buf, int radix);
+PUBLIC void *memset(void *ptr, int value, size_t size);
+PUBLIC void *memcpy(void *dst, const void *src, size_t size);
+PUBLIC int memcmp(const void *buf1, const void *buf2, size_t size);
+PUBLIC void *memmem(const void *buf1, size_t size1, const void *buf2, size_t size2);
 
-int kputchar (char ch);
-int kprintf (const char *fmt, ...);
+PUBLIC void clock_handler(int irq);
+PUBLIC int sys_get_ticks();
+
+PUBLIC char *ultoa(unsigned long val, char *buf, int radix);
+PUBLIC int kputchar (char ch);
+PUBLIC int kprintf (const char *fmt, ...);
 
 #endif // UTIL_H
