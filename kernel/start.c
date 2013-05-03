@@ -14,8 +14,8 @@
 
 PUBLIC void cstart()
 {
-	disp_str("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-			"---------------^_^ Hi, Owindy'S!--------------\n");
+	init_vga();
+	kprintf("---------------^_^ Hi, Owindy'S!--------------\n");
 
 	memcpy(&gdt,
 			(void*)(*((u32_t*)(&gdt_ptr[2]))),
@@ -34,5 +34,5 @@ PUBLIC void cstart()
 	
 	init_prot();
 
-	disp_str("---------------Bye...(~^o^~)---------------\n");
+	kprintf("---------------Bye...(~^o^~)---------------\n");
 }

@@ -37,7 +37,7 @@ PUBLIC void schedule()
 		}
 	}
 
-	disp_str("->");
+	kprintf("->");
 }
 
 PUBLIC void clock_handler(int irq)
@@ -63,6 +63,6 @@ PUBLIC void clock_handler(int irq)
 
 PUBLIC int sys_get_ticks()
 {
-	disp_str("#");
+	kputchar('#');
 	return 0;
 }

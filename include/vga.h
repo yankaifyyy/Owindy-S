@@ -1,7 +1,8 @@
-#ifndef _OWINDYS_VGA_H_
-#define _OWINDYS_VGA_H_
+#ifndef VGA_H
+#define VGA_H
 
 #include "type.h"
+#include "util.h"
 
 #define VGA_COLOR_BLACK 0
 #define VGA_COLOR_LOW_BLUE 1
@@ -16,13 +17,35 @@
 #define VGA_COLOR_HIGH_GREEN 10
 #define VGA_COLOR_HIGH_CYAN 11
 #define VGA_COLOR_HIGH_RED 12
-#define VGA_COLOR_HIGH_YELLO 14
+#define VGA_COLOR_HIGH_MAGENTA 13
+#define VGA_COLOR_HIGH_YELLOW 14
 #define VGA_COLOR_WHITE 15
 
-/*
- * Text Mode
- */
 #define VGA_ROWS_NUMBER 25
 #define VGA_COLS_NUMBER 80
+
+// low level API (no concern of frames)
+PRIVATE void get_vga_cell(int row, int col, char *chr, int *fore_color,
+                  int *back_color);
+PRIVATE void set_vga_cell(int row, int col, char chr, int fore_color, int back_color);
+
+int get_vga_frame_top(void);
+int get_vga_frame_left(void);
+int get_vga_frame_height(void);
+int get_vga_frame_width(void);
+int get_vga_frame_fcolor(void);
+int get_vga_frame_bcolor(void);
+void set_vga_frame(int top, int left, int height, int width, int fcolor,
+                   int bcolor);
+void clear_vga_frame(void);
+
+PRIVATE bool get_vga_cursor(void);
+PRIVATE void set_vga_cursor(bool visible);
+
+int get_vga_caret_row(void);
+int get_vga_caret_col(void);
+void set_vga_caret(int row, int col);
+
+PUBLIC void init_vga(void);
 
 #endif // VGA_H

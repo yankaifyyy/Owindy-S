@@ -30,7 +30,7 @@ u16_t	selector_ldt = SELECTOR_LDT_FIRST;
 
 PUBLIC int kernel_main()
 {
-	disp_str("-----\"kernel_main\" begins-----\n");
+	kprintf("-----\"kernel_main\" begins-----\n");
 	
 	//loop_counter = 0;
 	int i;
@@ -99,7 +99,7 @@ void delay(int time)
 	for (i = 0; i < time; i++) {
 		for (j = 0; j < 10; j++) {
 			for (k = 0; k < 10000; k++) {
-				disp_str("");
+				kprintf("");
 			}
 		}
 	}
@@ -108,7 +108,7 @@ void delay(int time)
 void TestA()
 {
 	while (1) {
-		disp_str("A.");
+		kprintf("A.");
 		get_ticks();
 		delay(1);
 	}
@@ -117,7 +117,7 @@ void TestA()
 void TestB()
 {
 	while(1){
-		disp_str("B.");
+		kprintf("B.");
 		get_ticks();
 		delay(1);
 	}
@@ -126,7 +126,7 @@ void TestB()
 void TestC()
 {
 	while(1){
-		disp_str("C.");
+		kprintf("C.");
 		get_ticks();
 		delay(1);
 	}

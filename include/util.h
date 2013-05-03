@@ -63,7 +63,7 @@ PUBLIC void clock_handler(int irq);
 PUBLIC int sys_get_ticks();
 
 PUBLIC char *ultoa(unsigned long val, char *buf, int radix);
-PUBLIC int kputchar (char ch);
-PUBLIC int kprintf (const char *fmt, ...);
+PUBLIC int kputchar (int chr);
+PUBLIC int kprintf (const char *format, ...);
 
 #endif // UTIL_H

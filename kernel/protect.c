@@ -246,7 +246,7 @@ PUBLIC void exception_handler(int vec_no, int err_code, int eip, int cs, int efl
 			    "#XF SIMD Floating-Point Exception"
 	};
 
-	disp_str(err_msg[vec_no]);
+	kprintf(err_msg[vec_no]);
 }
 
 PUBLIC void spurious_irq(int irq)

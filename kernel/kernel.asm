@@ -15,9 +15,9 @@ extern exception_handler
 
 ; 导入全局变量
 extern tss
+extern disp_pos
 extern gdt_ptr
 extern idt_ptr
-extern disp_pos
 extern irq_table
 extern k_reenter
 extern p_proc_ready
