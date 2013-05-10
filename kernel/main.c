@@ -2,8 +2,6 @@
 //-----------------------------------------------------------------
 //							main.c
 //-----------------------------------------------------------------
-//												   wind4869, 2013/4
-//-----------------------------------------------------------------
 
 #include "type.h"
 #include "protect.h"
@@ -12,7 +10,6 @@
 #include "kernel.h"
 #include "util.h"
 
-void get_ticks();
 void TestA();
 void TestB();
 void TestC();
@@ -23,23 +20,20 @@ PUBLIC TASK	task_table[NR_TASKS] = {
 	{TestC, STACK_SIZE_TESTC, "TestC"}
 };
 
-TASK* p_task = task_table;
-PROCESS* p_proc	= proc_table;
-char* p_task_stack = task_stack + STACK_SIZE_TOTAL;
-u16_t	selector_ldt = SELECTOR_LDT_FIRST;
-
 PUBLIC int kernel_main()
 {
 	kprintf("-----\"kernel_main\" begins-----\n");
 	
-	//loop_counter = 0;
+	TASK *p_task = task_table;
+	PROCESS *p_proc	= proc_table;
+
+	char* p_task_stack = task_stack + STACK_SIZE_TOTAL;
+	u16_t selector_ldt = SELECTOR_LDT_FIRST;
+
 	int i;
 	for (i = 0; i < NR_TASKS; i++) {
-		/* code */
-	
-	//while (loop_counter < NR_TASKS) {
 		strcpy(p_proc->p_name, p_task->name);
-		//p_proc->pid = i;
+		p_proc->pid = i;
 
 		p_proc->ldt_sel = selector_ldt;
 
@@ -73,18 +67,21 @@ PUBLIC int kernel_main()
 		p_proc++;
 		p_task++;
 		selector_ldt += 1 << 3;
-
-		//loop_counter++;
 	}
-/*
+
 	proc_table[0].ticks = proc_table[0].priority = 15;
 	proc_table[1].ticks = proc_table[1].priority = 5;
 	proc_table[2].ticks = proc_table[2].priority = 3;
-*/
+
 	k_reenter = 0;
 	ticks = 0;
 
 	p_proc_ready = proc_table;
+
+	// 初始化 8253 PIT 
+	outb(TIMER_MODE, RATE_GENERATOR);
+	outb(TIMER0, (u8_t)(TIMER_FREQ / HZ));
+	outb(TIMER0, (u8_t)((TIMER_FREQ/HZ) >> 8));
 
     put_irq_handler(CLOCK_IRQ, clock_handler); // 设定时钟中断处理程序
     enable_irq(CLOCK_IRQ);                     // 让8259A可以接收时钟中断
@@ -94,40 +91,44 @@ PUBLIC int kernel_main()
 	while(1){}
 }
 
-void delay(int time)
+PUBLIC void msleep(int ms)
 {
-	for (i = 0; i < time; i++) {
-		for (j = 0; j < 10; j++) {
-			for (k = 0; k < 10000; k++) {
-				kprintf("");
-			}
-		}
-	}
+	int t = get_ticks();
+	while ((get_ticks() - t) * 10 < ms) {}
 }
 
-void TestA()
+void delay(int time)
+{
+	int i, j, k;
+	for (i = 0; i < time; i++)
+		for (j = 0; j < 10; j++)
+			for (k = 0; k < 100; k++)
+				kprintf("");
+}
+
+PUBLIC void TestA()
 {
 	while (1) {
 		kprintf("A.");
-		get_ticks();
+		//if (get_ticks())
+			//kprintf("shot");
 		delay(1);
+		//msleep(500);
 	}
 }
 
-void TestB()
+PUBLIC void TestB()
 {
 	while(1){
 		kprintf("B.");
-		get_ticks();
 		delay(1);
 	}
 }
 
-void TestC()
+PUBLIC void TestC()
 {
 	while(1){
 		kprintf("C.");
-		get_ticks();
 		delay(1);
 	}
 }

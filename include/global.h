@@ -2,8 +2,6 @@
 //------------------------------------------------------
 //					global.h
 //------------------------------------------------------
-//									wind4869, 2013/4/3
-//------------------------------------------------------
 
 #ifndef _OWINDYS_GLOBAL_H_
 #define _OWINDYS_GLOBAL_H_ 
@@ -25,9 +23,6 @@ PUBLIC u32_t k_reenter;
 PUBLIC irq_handler irq_table[NR_IRQ];
 
 PUBLIC int ticks;
-//PUBLIC int loop_counter;
-
-PUBLIC int i, j, k;
 
 #endif
 

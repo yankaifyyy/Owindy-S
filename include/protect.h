@@ -2,8 +2,6 @@
 //-------------------------------------------------------------
 //						protect.h
 //-------------------------------------------------------------
-//											wind4869, 2013/4/2
-//-------------------------------------------------------------
 
 #ifndef _OWINDYS_PROTECT_H_
 #define _OWINDYS_PROTECT_H_
@@ -172,6 +170,13 @@ typedef struct s_tss {
 #define	INT_VECTOR_PROTECTION	0xD
 #define	INT_VECTOR_PAGE_FAULT	0xE
 #define	INT_VECTOR_COPROC_ERR	0x10
+
+// 8253 PIT (Programmable Interval Timer)
+#define TIMER0 0x40
+#define TIMER_MODE 0x43
+#define RATE_GENERATOR 0x34
+#define TIMER_FREQ 1193182L
+#define HZ 100
 
 //------------------系统调用------------------
 #define INT_VECTOR_SYS_CALL 0x80
