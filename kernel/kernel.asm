@@ -180,6 +180,7 @@ hwint14:
 ALIGN 16
 hwint15:
     hwint_slave 15
+
 ;------------------------save---------------------------
 save:
 	pushad							; 保存当前寄存器的值
@@ -188,9 +189,14 @@ save:
 	push fs
 	push gs
 
+	mov esi, edx ; 保存edx，edx中存放了系统调用的参数
+
 	mov dx, ss
 	mov ds, dx
 	mov es, dx
+	mov fs, dx
+
+	mov edx, esi ; 恢复edx
 
 	mov esi, esp                    ; esi = 进程表起始地址
 
@@ -205,6 +211,7 @@ save:
 .1:									; 中断重入，已在内核桟
 	push restart_reenter
 	jmp [esi + RETADR - P_STACKBASE]
+
 ;---------------------restart----------------------------
 restart:
 	mov	esp, [p_proc_ready]
@@ -221,15 +228,25 @@ restart_reenter:
 	popad
 	add	esp, 4
 	iretd
+
 ;--------------------系统调用处理-------------------------
 sys_call:
 	call save
 	
 	sti
+	push esi ; 保护esi，esi中保存了进程表首地址
+
+	push dword [p_proc_ready] ; 指向当前进程的指针 p
+	push edx ; 指向消息体的指针 m
+	push ecx ; src_dest
+	push ebx ; function
 
 	call [sys_call_table + eax * 4]	
-	mov [esi + EAXREG - P_STACKTOP], eax
 
+	add esp, 4 * 4 ; 跳过上面压入栈中的参数
+	pop esi ; 恢复esi
+
+	mov [esi + EAXREG - P_STACKTOP], eax ; 将返回值存入进程表eax位置
 	cli
 
 	ret

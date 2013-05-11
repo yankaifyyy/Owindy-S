@@ -1,16 +1,21 @@
-AS =nasm
-CC =gcc
-LD =ld
-CFLAGS =-g -Wall -O2 -fomit-frame-pointer -m32 -std=gnu99 -I./include -c
-LDFLAGS =-Ttext 0 -N -e _start --oformat binary -m elf_i386
+#############################################
+#          Makefile for  Owindy-S
+#############################################
+
+AS = nasm
+CC = gcc
+LD = ld
+
+CFLAGS = -g -Wall -O2 -fomit-frame-pointer -m32 -std=gnu99 -I./include -c
+LDFLAGS = -Ttext 0 -N -e _start --oformat binary -m elf_i386
 
 PWD = $(shell pwd)
-IMG :=a.img
-MOUNT_POINT :=./mount/
+IMG := a.img
+MOUNT_POINT := ./mount/
 
-BOOT_BIN =bootloader/ipl.sys
-LDR_BIN =bootloader/loader.sys
-KERNEL_BIN =kernel/kernel.sys
+BOOT_BIN = bootloader/ipl.sys
+LDR_BIN = bootloader/loader.sys
+KERNEL_BIN = kernel/kernel.sys
 
 .PHONY : default, clean, bootloader, kerenel, lib
 

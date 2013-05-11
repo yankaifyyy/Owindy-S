@@ -15,14 +15,17 @@ PUBLIC u8_t idt_ptr[6];
 PUBLIC GATE idt[IDT_SIZE];
 
 PUBLIC TSS tss;
-PUBLIC PROCESS* p_proc_ready;
-PUBLIC PROCESS proc_table[NR_TASKS];
+PUBLIC PROCESS *p_proc_ready;
+PUBLIC PROCESS proc_table[NR_TASKS + NR_PROCS];
 PUBLIC char task_stack[STACK_SIZE_TOTAL];
 
 PUBLIC u32_t k_reenter;
 PUBLIC irq_handler irq_table[NR_IRQ];
 
 PUBLIC int ticks;
+
+// 由进程指针求进程号
+#define proc2pid(x)(x - proc_table)
 
 #endif
 

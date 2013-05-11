@@ -6,6 +6,13 @@
 #ifndef	_OWINDYS_PROC_H_
 #define	_OWINDYS_PROC_H_
 
+// 一个极简的消息结构
+typedef struct message {
+	int source;
+	int type;
+	int retval;
+} MESSAGE;
+
 typedef struct stackframe {
 	u32_t	gs;
 	u32_t	fs;
@@ -33,11 +40,20 @@ typedef struct proc {
 	u16_t ldt_sel;    
 	DESCRIPTOR ldts[LDT_SIZE];
 
+	u32_t pid;     
     int ticks;      
     int priority;
-
-	u32_t pid;     
 	char p_name[16];
+
+	int p_flags;
+	MESSAGE *p_msg;
+	int p_recvfrom; // 要从该进程接收消息
+	int p_sendto; // 要发送消息给该进程
+
+	//int has_int_msg; // 不太了解有什么用???
+
+	struct proc *q_sending; // 消息发送队列
+	struct proc *next_sending;
 } PROCESS;
 
 typedef struct task {

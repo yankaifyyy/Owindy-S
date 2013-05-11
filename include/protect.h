@@ -182,21 +182,41 @@ typedef struct s_tss {
 #define INT_VECTOR_SYS_CALL 0x80
 #define NR_SYS_CALL 1
 //-------------------进程---------------------
-// 每个任务的LDT中描述符的个数
+// 每个任务的LDT中描述符的个数和种类
 #define LDT_SIZE 2
+#define INDEX_LDT_C 0
+#define INDEX_LDT_RW 1
 
-// number of tasks
-#define NR_TASKS 3
+// number of tasks and procs
+#define NR_TASKS 1
+#define NR_PROCS 3
+
+#define TASK_SYS 0
+
+#define ANY (NR_TASKS + NR_PROCS + 10)
+#define NO_TASK	(NR_TASKS + NR_PROCS + 20)
 
 // stacks of tasks
+#define STACK_SIZE_SYS   0x8000
 #define STACK_SIZE_TESTA 0x8000
 #define STACK_SIZE_TESTB 0x8000
 #define STACK_SIZE_TESTC 0x8000
 
-#define STACK_SIZE_TOTAL (STACK_SIZE_TESTA + \
+#define STACK_SIZE_TOTAL (STACK_SIZE_SYS + \
+				STACK_SIZE_TESTA + \
 				STACK_SIZE_TESTB + \
 				STACK_SIZE_TESTC)
 
+// IPC
+#define SEND    1
+#define RECEIVE	2
+#define BOTH	3 // BOTH = SEND | RECEIVE
+
+//进程状态
+#define SENDING 0x02
+#define RECEIVING 0x04
+
+// 函数声明
 PUBLIC void init_prot();
 PUBLIC u32_t seg2phys(u16_t seg);
 PUBLIC void init_8259A();
@@ -210,5 +230,10 @@ PUBLIC void put_irq_handler(int irq, irq_handler handler);
 
 PUBLIC void disable_irq(int irq);
 PUBLIC void enable_irq(int irq);
+
+PUBLIC void TestA();
+PUBLIC void TestB();
+PUBLIC void TestC();
+PUBLIC void task_sys();
 
 #endif
