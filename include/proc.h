@@ -13,6 +13,10 @@ typedef struct message {
 	int retval;
 } MESSAGE;
 
+enum msgtype {
+	GET_TICKS,
+};
+
 typedef struct stackframe {
 	u32_t	gs;
 	u32_t	fs;

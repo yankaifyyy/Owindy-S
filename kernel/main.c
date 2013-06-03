@@ -50,7 +50,7 @@ PUBLIC int kernel_main()
 			rpl = RPL_TASK;
 			eflags = 0x1202; // IF = 1
 
-			priority = 15;
+			priority = 5;
 		}
 
 		// 初始化进程号和进程名
@@ -119,7 +119,18 @@ PUBLIC int kernel_main()
 	while(1) {}
 }
 
-void delay(int time)
+PUBLIC int send_recv(int function, int src_dest, MESSAGE *m);
+
+PUBLIC int get_ticks()
+{
+	MESSAGE msg;
+	memset(&msg, 0, sizeof(MESSAGE));
+	msg.type = GET_TICKS;
+	send_recv(BOTH, TASK_SYS, &msg);
+	return msg.retval;
+}
+
+PUBLIC void delay(int time)
 {
 	int i, j, k;
 	for (i = 0; i < time; i++)
@@ -131,7 +142,8 @@ void delay(int time)
 PUBLIC void TestA()
 {
 	while (1) {
-		kprintf("A.");
+		//kprintf("A.");
+		kprintf("<Ticks:%d>", get_ticks());
 		delay(1);
 	}
 }
@@ -154,8 +166,18 @@ PUBLIC void TestC()
 
 PUBLIC void task_sys()
 {
+	MESSAGE msg;
 	while (1) {
-		kprintf("SYS.");
-		delay(1);
+		send_recv(RECEIVE, ANY, &msg);
+		int src = msg.retval;
+
+		switch (msg.type) {
+		case GET_TICKS:
+			msg.retval = ticks;
+			send_recv(SEND, src, &msg);
+			break;
+		default:
+			break;
+		}
 	}
 }

@@ -14,13 +14,6 @@ global enable_irq
 
 extern disp_pos
 
-global get_ticks
-
-get_ticks:
-	mov	eax, _NR_get_ticks
-	int	INT_VECTOR_SYS_CALL
-	ret
-
 ;*********************************************************************
 ;PUBLIC void disp_str(char *p_string);
 ;*********************************************************************

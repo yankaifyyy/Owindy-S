@@ -19,32 +19,34 @@ PUBLIC void schedule()
 
 	while (!greatest_ticks) {
 		for (p = proc_table; p < proc_table + NR_TASKS + NR_PROCS; p++)
-			if (p->ticks > greatest_ticks) {
-				greatest_ticks = p->ticks;
-				p_proc_ready = p;
-			}
-
+			if (p->p_flags == 0)
+				if (p->ticks > greatest_ticks) {
+					greatest_ticks = p->ticks;
+					p_proc_ready = p;
+				}
+				
 		if (!greatest_ticks)
 			for (p = proc_table; p < proc_table + NR_TASKS + NR_PROCS; p++)
-				p->ticks = p->priority;
+				if (p->p_flags == 0)
+					p->ticks = p->priority;
 	}
 }
 
 PUBLIC void clock_handler(int irq)
 {
 	kprintf("#");
-	ticks++;
-	p_proc_ready->ticks--;
+	//ticks++;
+	//p_proc_ready->ticks--;
 
-	if (k_reenter != 0) {
-		return;
-	}
+	//if (k_reenter != 0) {
+	//	return;
+	//}
 
-	if (p_proc_ready->ticks > 0) {
-		return;
-	}
+	//if (p_proc_ready->ticks > 0) {
+	//	return;
+	//}
 
-	schedule();
+	//schedule();
 }
 
 PUBLIC void *va2la(int pid, void *va) // 由虚拟地址求线性地址
@@ -73,6 +75,8 @@ PUBLIC int msg_send(PROCESS *current, int dest, MESSAGE *m)
 		p_dest->p_msg = 0;
 		p_dest->p_flags &= ~RECEIVING; // dest恢复运行
 		p_dest->p_recvfrom = NO_TASK;
+
+		kprintf("p_flags: %d", p_dest->p_flags);
 	} 
 	else {
 		sender->p_flags |= SENDING;
@@ -100,6 +104,8 @@ PUBLIC int msg_send(PROCESS *current, int dest, MESSAGE *m)
 
 PUBLIC int msg_receive(PROCESS *current, int src, MESSAGE *m)
 {
+	kprintf("In msg_receive!!!");
+
 	PROCESS *receiver = current;
 	PROCESS *p_from = 0;
 	PROCESS *prev = 0;
@@ -149,6 +155,8 @@ PUBLIC int msg_receive(PROCESS *current, int src, MESSAGE *m)
 		p_from->p_flags &= ~SENDING;
 	}
 	else { // 木有进程给receiver发送消息
+		kprintf("block!!!");
+
 		receiver->p_flags |= RECEIVING;
 		receiver->p_msg = m;
 		receiver->p_recvfrom = src;
@@ -164,6 +172,8 @@ PUBLIC int sys_sendrec(int function, int src_dest, MESSAGE *m, PROCESS *p)
 	int ret = 0;
 	int caller = proc2pid(p);
 
+	kprintf("caller: %d", caller);
+
 	MESSAGE *mla = (MESSAGE *)va2la(caller, m);
 	mla->source = caller;
 
@@ -176,6 +186,9 @@ PUBLIC int sys_sendrec(int function, int src_dest, MESSAGE *m, PROCESS *p)
 		ret = msg_receive(p, src_dest, m);
 		if (ret)
 			return ret;
+	}
+	else {
+		kprintf("Invalid function type in sys_sendrec!!!");
 	}
 
 	return 0;
@@ -199,6 +212,7 @@ PUBLIC int send_recv(int function, int src_dest, MESSAGE *m)
 		ret = sendrec(function, src_dest, m);
 		break;
 	default:
+		kprintf("Invalid function type in send_recv!!!");
 		break;
 	}
 		

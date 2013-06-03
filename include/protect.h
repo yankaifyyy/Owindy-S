@@ -176,7 +176,7 @@ typedef struct s_tss {
 #define TIMER_MODE 0x43
 #define RATE_GENERATOR 0x34
 #define TIMER_FREQ 1193182L
-#define HZ 100
+#define HZ 10
 
 //------------------系统调用------------------
 #define INT_VECTOR_SYS_CALL 0x80

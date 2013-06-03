@@ -24,3 +24,10 @@
 
 # Logging files
 *.log
+
+# Cscope and ctags
+*.out
+*.files
+tags
+index.sh
+
