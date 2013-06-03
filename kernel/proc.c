@@ -14,7 +14,7 @@ PUBLIC int sendrec(int function, int src_dest, MESSAGE *m);
 
 PUBLIC void schedule()
 {
-	PROCESS* p;
+	PROCESS *p;
 	int	greatest_ticks = 0;
 
 	while (!greatest_ticks) {
@@ -34,19 +34,21 @@ PUBLIC void schedule()
 
 PUBLIC void clock_handler(int irq)
 {
-	kprintf("#");
-	//ticks++;
-	//p_proc_ready->ticks--;
+	ticks++;
 
-	//if (k_reenter != 0) {
-	//	return;
-	//}
+	kprintf("<clock,%d>", ticks);
 
-	//if (p_proc_ready->ticks > 0) {
-	//	return;
-	//}
+	p_proc_ready->ticks--;
 
-	//schedule();
+	if (k_reenter != 0) {
+		return;
+	}
+
+	if (p_proc_ready->ticks > 0) {
+		return;
+	}
+
+	schedule();
 }
 
 PUBLIC void *va2la(int pid, void *va) // 由虚拟地址求线性地址
@@ -62,21 +64,24 @@ PUBLIC void *va2la(int pid, void *va) // 由虚拟地址求线性地址
 
 PUBLIC int msg_send(PROCESS *current, int dest, MESSAGE *m)
 {
+	kprintf("<send,%d->%d>", proc2pid(current), dest);
+
 	PROCESS *sender = current;
 	PROCESS *p_dest = proc_table + dest;
-
+	
 	if ((p_dest->p_flags & RECEIVING) && // dest在等待接收消息
-		(p_dest->p_recvfrom == dest ||   
+		(p_dest->p_recvfrom == proc2pid(sender) ||   
 		 p_dest->p_recvfrom == ANY)) {
 		
 		memcpy(va2la(dest, p_dest->p_msg),  // 复制消息给dest
-				va2la(proc2pid(sender), m),	// 没有实质作用
+				va2la(proc2pid(sender), m),
 				sizeof(MESSAGE));
+
 		p_dest->p_msg = 0;
 		p_dest->p_flags &= ~RECEIVING; // dest恢复运行
 		p_dest->p_recvfrom = NO_TASK;
 
-		kprintf("p_flags: %d", p_dest->p_flags);
+		kprintf("<unblock,%d>", dest);
 	} 
 	else {
 		sender->p_flags |= SENDING;
@@ -104,7 +109,7 @@ PUBLIC int msg_send(PROCESS *current, int dest, MESSAGE *m)
 
 PUBLIC int msg_receive(PROCESS *current, int src, MESSAGE *m)
 {
-	kprintf("In msg_receive!!!");
+	kprintf("<receive,%d>", proc2pid(current));
 
 	PROCESS *receiver = current;
 	PROCESS *p_from = 0;
@@ -113,12 +118,16 @@ PUBLIC int msg_receive(PROCESS *current, int src, MESSAGE *m)
 	int copied = 0;
 
 	if (src == ANY) { // 从任意进程接收消息
+		kprintf("<from,ANY>");
+
 		if (receiver->q_sending) { // 选择发送队列的第一个
 			p_from = receiver->q_sending;
 			copied = 1;
 		}
 	}
-	else if (src >= 0 && src < NR_TASKS + NR_PROCS){ // 从特定进程接收消息
+	else if (src >= 0 && src < NR_TASKS + NR_PROCS) { // 从特定进程接收消息
+		kprintf("<from,%d>", src);
+
 		p_from = proc_table + src;
 
 		if ((p_from->p_flags & SENDING) && // src要发送消息给receiver
@@ -150,16 +159,17 @@ PUBLIC int msg_receive(PROCESS *current, int src, MESSAGE *m)
 		memcpy(va2la(proc2pid(receiver), m), // 复制消息给receiver
 				va2la(src, p_from->p_msg),   // 同样没有实质作用
 				sizeof(MESSAGE));
+
 		p_from->p_msg = 0; // src恢复运行
 		p_from->p_sendto = NO_TASK;
 		p_from->p_flags &= ~SENDING;
 	}
 	else { // 木有进程给receiver发送消息
-		kprintf("block!!!");
-
 		receiver->p_flags |= RECEIVING;
 		receiver->p_msg = m;
 		receiver->p_recvfrom = src;
+
+		kprintf("<block,%d>", proc2pid(receiver));
 
 		schedule(); // receiver被阻塞，进行调度
 	}
@@ -171,8 +181,6 @@ PUBLIC int sys_sendrec(int function, int src_dest, MESSAGE *m, PROCESS *p)
 {
 	int ret = 0;
 	int caller = proc2pid(p);
-
-	kprintf("caller: %d", caller);
 
 	MESSAGE *mla = (MESSAGE *)va2la(caller, m);
 	mla->source = caller;
@@ -196,6 +204,8 @@ PUBLIC int sys_sendrec(int function, int src_dest, MESSAGE *m, PROCESS *p)
 
 PUBLIC int send_recv(int function, int src_dest, MESSAGE *m)
 {
+	kprintf("<send_recv,%d,%d,%d>", m->type, m->source, m->retval);
+
 	int ret = 0;
 
 	if (function == RECEIVE)
@@ -204,7 +214,7 @@ PUBLIC int send_recv(int function, int src_dest, MESSAGE *m)
 	switch (function) {
 	case BOTH:
 		ret = sendrec(SEND, src_dest, m);
-		if (ret)
+		if (!ret)
 			ret = sendrec(RECEIVE, src_dest, m);
 		break;
 	case SEND:

@@ -142,8 +142,8 @@ PUBLIC void delay(int time)
 PUBLIC void TestA()
 {
 	while (1) {
-		//kprintf("A.");
-		kprintf("<Ticks:%d>", get_ticks());
+		kprintf("A.");
+		kprintf("<--Ticks:%d-->", get_ticks());
 		delay(1);
 	}
 }
@@ -167,13 +167,21 @@ PUBLIC void TestC()
 PUBLIC void task_sys()
 {
 	MESSAGE msg;
+	memset(&msg, 0, sizeof(MESSAGE));
+
 	while (1) {
 		send_recv(RECEIVE, ANY, &msg);
-		int src = msg.retval;
+		int src = msg.source;
 
 		switch (msg.type) {
 		case GET_TICKS:
+
+			kprintf("<GET_TICKS>");
+
 			msg.retval = ticks;
+
+			kprintf("<retval,%d>", msg.retval);
+
 			send_recv(SEND, src, &msg);
 			break;
 		default:

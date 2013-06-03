@@ -226,7 +226,7 @@ restart_reenter:
 	pop	es
 	pop	ds
 	popad
-	add	esp, 4
+	add	esp, 4 ; 跳过retaddr
 	iretd
 
 ;--------------------系统调用处理-------------------------
