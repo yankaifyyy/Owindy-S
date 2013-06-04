@@ -127,7 +127,6 @@ PUBLIC int get_ticks()
 	memset(&msg, 0, sizeof(MESSAGE));
 	msg.type = GET_TICKS;
 	send_recv(BOTH, TASK_SYS, &msg);
-	
 	return msg.retval;
 }
 
@@ -143,7 +142,8 @@ PUBLIC void delay(int time)
 PUBLIC void TestA()
 {
 	while (1) {
-		kprintf("<--A,ticks:%d-->", get_ticks());
+		kprintf("A.");
+		kprintf("<--Ticks:%d-->", get_ticks());
 		delay(1);
 	}
 }
@@ -151,7 +151,7 @@ PUBLIC void TestA()
 PUBLIC void TestB()
 {
 	while (1) {
-		kprintf("<B>");
+		kprintf("B.");
 		delay(1);
 	}
 }
@@ -159,23 +159,30 @@ PUBLIC void TestB()
 PUBLIC void TestC()
 {
 	while (1) {
-		kprintf("<C>");
+		kprintf("C.");
 		delay(1);
 	}
 }
 
 PUBLIC void task_sys()
 {
-	MESSAGE msg;
 	while (1) {
+		MESSAGE msg;
+		memset(&msg, 0, sizeof(MESSAGE));
+
 		send_recv(RECEIVE, ANY, &msg);
 		int src = msg.source;
 
+		kprintf("<send_recv,%d,%d,%d>", m->type, m->source, m->retval);
+
 		switch (msg.type) {
 		case GET_TICKS:
+
+			kprintf("<GET_TICKS>");
+
 			msg.retval = ticks;
 
-			kprintf("<task_sys,%d,%d,%d>", msg.type, msg.source, msg.retval);
+			kprintf("<retval,%d>", msg.retval);
 
 			send_recv(SEND, src, &msg);
 			break;

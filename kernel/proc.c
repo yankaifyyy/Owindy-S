@@ -36,7 +36,7 @@ PUBLIC void clock_handler(int irq)
 {
 	ticks++;
 
-	kprintf("<clock,%d>", ticks);
+	kprintf("<%d>", ticks);
 
 	p_proc_ready->ticks--;
 
@@ -64,7 +64,7 @@ PUBLIC void *va2la(int pid, void *va) // 由虚拟地址求线性地址
 
 PUBLIC int msg_send(PROCESS *current, int dest, MESSAGE *m)
 {
-	kprintf("<send,%d->%d>", proc2pid(current), dest);
+	kprintf("<send,%d,%d>", proc2pid(current), dest);
 
 	PROCESS *sender = current;
 	PROCESS *p_dest = proc_table + dest;
@@ -109,7 +109,7 @@ PUBLIC int msg_send(PROCESS *current, int dest, MESSAGE *m)
 
 PUBLIC int msg_receive(PROCESS *current, int src, MESSAGE *m)
 {
-	kprintf("<receive,%d>", proc2pid(current));
+	kprintf("<receive,%d,%d>", proc2pid(current), src);
 
 	PROCESS *receiver = current;
 	PROCESS *p_from = 0;
@@ -118,16 +118,12 @@ PUBLIC int msg_receive(PROCESS *current, int src, MESSAGE *m)
 	int copied = 0;
 
 	if (src == ANY) { // 从任意进程接收消息
-		kprintf("<from,ANY>");
-
 		if (receiver->q_sending) { // 选择发送队列的第一个
 			p_from = receiver->q_sending;
 			copied = 1;
 		}
 	}
 	else if (src >= 0 && src < NR_TASKS + NR_PROCS) { // 从特定进程接收消息
-		kprintf("<from,%d>", src);
-
 		p_from = proc_table + src;
 
 		if ((p_from->p_flags & SENDING) && // src要发送消息给receiver
@@ -157,7 +153,7 @@ PUBLIC int msg_receive(PROCESS *current, int src, MESSAGE *m)
 		}
 
 		memcpy(va2la(proc2pid(receiver), m), // 复制消息给receiver
-				va2la(src, p_from->p_msg),   // 同样没有实质作用
+				va2la(src, p_from->p_msg),
 				sizeof(MESSAGE));
 
 		p_from->p_msg = 0; // src恢复运行
@@ -204,8 +200,6 @@ PUBLIC int sys_sendrec(int function, int src_dest, MESSAGE *m, PROCESS *p)
 
 PUBLIC int send_recv(int function, int src_dest, MESSAGE *m)
 {
-	kprintf("<send_recv,%d,%d,%d>", m->type, m->source, m->retval);
-
 	int ret = 0;
 
 	if (function == RECEIVE)
@@ -213,10 +207,22 @@ PUBLIC int send_recv(int function, int src_dest, MESSAGE *m)
 
 	switch (function) {
 	case BOTH:
-		ret = sendrec(SEND, src_dest, m);
-		if (!ret)
-			ret = sendrec(RECEIVE, src_dest, m);
-		break;
+		{
+			int caller = proc2pid(p_proc_ready);		// 取m的线性地址保存到msg！
+			MESSAGE *msg = (MESSAGE *)va2la(caller, m); // 实践证明直接把m赋给msg是不行的！
+
+			//kprintf("<m1,%d>", m);
+			kprintf("<msg1,%d>", msg);
+
+			ret = sendrec(SEND, src_dest, m); // m在msg_send最后还是正常的！
+
+			//kprintf("<m2,%d>", m); // m莫名其妙地变了！！！！！
+			kprintf("<msg2,%d>", msg);
+
+			if (!ret)
+				ret = sendrec(RECEIVE, src_dest, msg);
+			break;
+		}
 	case SEND:
 	case RECEIVE:
 		ret = sendrec(function, src_dest, m);
