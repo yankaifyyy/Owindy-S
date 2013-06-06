@@ -212,7 +212,7 @@ PUBLIC int send_recv(int function, int src_dest, MESSAGE *m)
 			MESSAGE *msg = (MESSAGE *)va2la(caller, m); // 实践证明直接把m赋给msg是不行的！
 
 			//kprintf("<m1,%d>", m);
-			kprintf("<msg1,%d>", msg);
+			kprintf("<msg1,%d>", msg); // msg1，msg2输出居然也会影响msg！！！！！
 
 			ret = sendrec(SEND, src_dest, m); // m在msg_send最后还是正常的！
 

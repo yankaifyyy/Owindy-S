@@ -140,11 +140,20 @@ PUBLIC void delay(int time)
 				kprintf("");
 }
 
+PUBLIC void milli_delay(int milli_sec)
+{
+        int t = get_ticks();
+
+        while(((get_ticks() - t) * 1000 / HZ) < milli_sec) {}
+}
+
+
 PUBLIC void TestA()
 {
 	while (1) {
 		kprintf("<--A,ticks:%d-->", get_ticks());
 		delay(1);
+		//milli_delay(500);
 	}
 }
 
@@ -153,6 +162,7 @@ PUBLIC void TestB()
 	while (1) {
 		kprintf("<B>");
 		delay(1);
+		//milli_delay(200);
 	}
 }
 
@@ -161,6 +171,7 @@ PUBLIC void TestC()
 	while (1) {
 		kprintf("<C>");
 		delay(1);
+		//milli_delay(200);
 	}
 }
 
@@ -175,6 +186,7 @@ PUBLIC void task_sys()
 		case GET_TICKS:
 			msg.retval = ticks;
 
+			/*这句竟然会影响msg的值，去掉之后msg居然不正确了！！！！！*/
 			kprintf("<task_sys,%d,%d,%d>", msg.type, msg.source, msg.retval);
 
 			send_recv(SEND, src, &msg);
