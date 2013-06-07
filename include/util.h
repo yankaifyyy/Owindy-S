@@ -4,10 +4,22 @@
 // 线性地址->物理地址转换的宏
 #define vir2phys(seg_base, vir)	(u32_t)(((u32_t)seg_base) + (u32_t)(vir))
 
+static inline void disable_int() {
+    __asm__ __volatile__ (
+            "cli"
+            );
+}
+
+static inline void enable_int() {
+    __asm__ __volatile__ (
+            "sti"
+            );
+}
+
 static inline u8_t inb(u16_t port) {
 	u8_t val;
 	__asm__ __volatile__ (
-			"inb %%dx, %%ax" : "=a"(val) : "d"(port)
+			"inb %%dx, %%al" : "=a"(val) : "d"(port)
 			);
 	return val;
 }
@@ -15,7 +27,7 @@ static inline u8_t inb(u16_t port) {
 static inline u16_t inw(u16_t port) {
 	u16_t val;
 	__asm__ __volatile__ (
-			"inw %%dx, %%ax" : "=a"(val) : "d"(port)
+			"inw %%dx, %%al" : "=a"(val) : "d"(port)
 			);
 	return val;
 }

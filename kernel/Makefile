@@ -17,8 +17,8 @@ KERNEL_SRC := kernel.asm
 
 default : $(KERNEL_SYS)
 
-$(KERNEL_SYS) : kernel.o start.o main.o protect.o proc.o syscall.o clock.o vga.o keyboard.o
-	$(LD) $(LDFLAGS) kernel.o start.o main.o protect.o proc.o syscall.o clock.o vga.o keyboard.o ../lib/alib.o ../lib/util.o -o $@
+$(KERNEL_SYS) : kernel.o start.o main.o protect.o proc.o syscall.o clock.o vga.o keyboard.o tty.o
+	$(LD) $(LDFLAGS) kernel.o start.o main.o protect.o proc.o syscall.o clock.o vga.o keyboard.o tty.o ../lib/alib.o ../lib/util.o -o $@
 
 kernel.o : kernel.asm ../include/asm/kconst.inc
 	$(AS) $< $(ASFLAGS) -o $@
@@ -26,7 +26,7 @@ kernel.o : kernel.asm ../include/asm/kconst.inc
 start.o : start.c ../include/type.h ../include/protect.h ../include/proc.h ../include/global.h ../include/kernel.h ../include/util.h
 	$(CC) $< $(CFLAGS) -c
 
-main.o : main.c ../include/type.h ../include/protect.h ../include/proc.h ../include/global.h ../include/kernel.h ../include/util.h
+main.o : main.c ../include/type.h ../include/protect.h ../include/proc.h ../include/global.h ../include/kernel.h ../include/util.h ../include/tty.h
 	$(CC) $< $(CFLAGS) -c
 
 protect.o : protect.c ../include/type.h ../include/protect.h ../include/proc.h ../include/global.h ../include/kernel.h ../include/util.h
@@ -45,6 +45,9 @@ vga.o : vga.c ../include/global.h ../include/type.h ../include/util.h ../include
 	$(CC) $< $(CFLAGS) -c
 
 keyboard.o : keyboard.c ../include/protect.h ../include/type.h ../include/util.h ../include/kernel.h ../include/keyboard.h
+	$(CC) $< $(CFLAGS) -c
+
+tty.o : tty.c ../include/type.h ../include/util.h ../include/kernel.h ../include/tty.h
 	$(CC) $< $(CFLAGS) -c
 
 clean :

@@ -9,9 +9,11 @@
 #include "global.h"
 #include "kernel.h"
 #include "util.h"
+#include "tty.h"
 
 PUBLIC TASK task_table[NR_TASKS] = {
-	{task_sys, STACK_SIZE_SYS, "SYS"}
+	{task_sys, STACK_SIZE_SYS, "SYS"},
+    {task_tty, STACK_SIZE_TTY, "tty"}
 };
 
 PUBLIC TASK user_proc_table[NR_PROCS] = {

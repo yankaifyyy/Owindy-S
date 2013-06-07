@@ -119,13 +119,19 @@
 /************************************************************************/
 /* Keyboard structure, 1 per console. */
 typedef struct s_kb {
+    int count;
 	char*	p_head;			/* 指向缓冲区中下一个空闲位置 */
 	char*	p_tail;			/* 指向键盘任务应处理的字节 */
-	int	count;			/* 缓冲区中共有多少字节 */
 	char	buf[KB_IN_BYTES];	/* 缓冲区 */
 }KB_INPUT;
 
+#define KB_DATA 0x60
+#define KB_CMD  0x64
+#define KB_ACK  0xFA
+#define LED_CODE    0xED
+
 PUBLIC void init_keyboard();
+PUBLIC void keyboard_read();
 
 #endif
 

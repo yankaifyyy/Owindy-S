@@ -18,7 +18,7 @@
 
 /* Keymap for US MF-2 keyboard. */
 
-u32 keymap[NR_SCAN_CODES * MAP_COLS] = {
+u32_t keymap[NR_SCAN_CODES * MAP_COLS] = {
 
 /* scan-code			!Shift		Shift		E0 XX	*/
 /* ==================================================================== */

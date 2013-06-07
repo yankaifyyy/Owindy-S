@@ -188,7 +188,7 @@ typedef struct s_tss {
 #define INDEX_LDT_RW 1
 
 // number of tasks and procs
-#define NR_TASKS 1
+#define NR_TASKS 2
 #define NR_PROCS 3
 
 #define TASK_SYS 0
@@ -198,6 +198,7 @@ typedef struct s_tss {
 
 // stacks of tasks
 #define STACK_SIZE_SYS   0x8000
+#define STACK_SIZE_TTY   0x8000
 #define STACK_SIZE_TESTA 0x8000
 #define STACK_SIZE_TESTB 0x8000
 #define STACK_SIZE_TESTC 0x8000
