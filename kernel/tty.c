@@ -84,3 +84,10 @@ PRIVATE void init_tty(TTY *p_tty) {
     p_tty->p_inbuf_head = p_tty->p_inbuf_tail = p_tty->in_buf;
 }
 
+PUBLIC int sys_write(char *buf, int len, PROCESS *p_proc)
+{
+    tty_write(&tty0, buf, len);
+    return len;
+}
+
+

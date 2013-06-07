@@ -6,6 +6,7 @@
 #include "type.h"
 #include "protect.h"
 #include "proc.h"
+#include "proto.h"
 #include "global.h"
 #include "kernel.h"
 #include "util.h"

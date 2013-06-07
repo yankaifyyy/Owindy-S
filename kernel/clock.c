@@ -2,6 +2,7 @@
 #include "util.h"
 #include "protect.h"
 #include "kernel.h"
+#include "proto.h"
 
 PUBLIC void init_clock()
 {

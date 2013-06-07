@@ -3,6 +3,7 @@
 
 #include "type.h"
 #include "protect.h"
+#include "proc.h"
 #include "util.h"
 #include "kernel.h"
 #include "vga.h"

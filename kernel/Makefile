@@ -17,8 +17,8 @@ KERNEL_SRC := kernel.asm
 
 default : $(KERNEL_SYS)
 
-$(KERNEL_SYS) : kernel.o start.o main.o protect.o proc.o syscall.o clock.o vga.o keyboard.o tty.o sprintf.o printf.o
-	$(LD) $(LDFLAGS) kernel.o start.o main.o protect.o proc.o syscall.o clock.o vga.o keyboard.o tty.o sprintf.o printf.o ../lib/alib.o ../lib/util.o -o $@
+$(KERNEL_SYS) : kernel.o start.o main.o protect.o proc.o syscall.o clock.o vga.o keyboard.o tty.o 
+	$(LD) $(LDFLAGS) kernel.o start.o main.o protect.o proc.o syscall.o clock.o vga.o keyboard.o tty.o ../lib/alib.o ../lib/util.o -o $@
 
 kernel.o : kernel.asm ../include/asm/kconst.inc
 	$(AS) $< $(ASFLAGS) -o $@
@@ -48,12 +48,6 @@ keyboard.o : keyboard.c ../include/protect.h ../include/type.h ../include/util.h
 	$(CC) $< $(CFLAGS) -c
 
 tty.o : tty.c ../include/type.h ../include/util.h ../include/kernel.h ../include/tty.h
-	$(CC) $< $(CFLAGS) -c
-
-sprintf.o : sprintf.c ../include/type.h ../include/util.h
-	$(CC) $< $(CFLAGS) -c
-
-printf.o : printf.c ../include/type.h ../include/util.h ../include/tty.h ../include/kernel.h
 	$(CC) $< $(CFLAGS) -c
 
 clean :

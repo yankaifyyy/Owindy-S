@@ -6,6 +6,8 @@
 #ifndef	_OWINDYS_PROC_H_
 #define	_OWINDYS_PROC_H_
 
+#include "protect.h"
+
 // 一个极简的消息结构
 typedef struct message {
 	int source;

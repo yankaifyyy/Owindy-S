@@ -6,6 +6,7 @@
 #include "type.h"
 #include "protect.h"
 #include "proc.h"
+#include "proto.h"
 #include "global.h"
 #include "kernel.h"
 #include "util.h"
@@ -36,9 +37,7 @@ PUBLIC void clock_handler(int irq)
 {
 	ticks++;
 
-    /*
-     *kprintf("<%d>", ticks);
-     */
+    kprintf("<%d>", ticks);
 
 	p_proc_ready->ticks--;
 

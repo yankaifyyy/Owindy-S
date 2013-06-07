@@ -6,14 +6,15 @@
 #include "type.h"
 #include "protect.h"
 #include "proc.h"
+#include "proto.h"
 #include "global.h"
 #include "kernel.h"
 #include "util.h"
 #include "tty.h"
 
 PUBLIC TASK task_table[NR_TASKS] = {
-	/*{task_sys, STACK_SIZE_SYS, "SYS"},*/
-    {task_tty, STACK_SIZE_SYS, "TTY"}
+    {task_tty, STACK_SIZE_TTY, "TTY"},
+    {task_sys, STACK_SIZE_SYS, "SYS"}
 };
 
 PUBLIC TASK user_proc_table[NR_PROCS] = {
@@ -147,9 +148,7 @@ PUBLIC void milli_delay(int milli_sec)
 PUBLIC void TestA()
 {
 	while (1) {
-        /*
-         *kprintf("<--A,ticks:%d-->", get_ticks());
-         */
+        kprintf("<--A,ticks:%d-->", get_ticks());
 		delay(1);
 		//milli_delay(500);
 	}
@@ -158,9 +157,7 @@ PUBLIC void TestA()
 PUBLIC void TestB()
 {
 	while (1) {
-        /*
-         *kprintf("<B>");
-         */
+        kprintf("<B>");
 		delay(1);
 		//milli_delay(200);
 	}
@@ -169,9 +166,7 @@ PUBLIC void TestB()
 PUBLIC void TestC()
 {
 	while (1) {
-        /*
-		 *kprintf("<C>");
-         */
+        kprintf("<C>");
 		delay(1);
 		//milli_delay(200);
 	}

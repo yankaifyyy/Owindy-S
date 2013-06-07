@@ -5,8 +5,10 @@
 
 INT_VECTOR_SYS_CALL equ 0x80
 _NR_sendrec equ 0
+_NR_write equ 1
 
 global sendrec
+global write
 
 bits 32
 [section .text]
@@ -21,3 +23,13 @@ sendrec:
 	mov edx, [esp + 12] ; m (指向消息的指针)
 	int INT_VECTOR_SYS_CALL
 	ret
+
+;==========================================================
+; Temp Syscall for Write
+;==========================================================
+write:
+    mov eax, _NR_write
+    mov edx, [esp + 4]
+    mov ecx, [esp + 8]
+    int INT_VECTOR_SYS_CALL
+    ret

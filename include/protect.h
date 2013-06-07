@@ -178,9 +178,6 @@ typedef struct s_tss {
 #define TIMER_FREQ 1193182L
 #define HZ 10
 
-//------------------系统调用------------------
-#define INT_VECTOR_SYS_CALL 0x80
-#define NR_SYS_CALL 1
 //-------------------进程---------------------
 // 每个任务的LDT中描述符的个数和种类
 #define LDT_SIZE 2

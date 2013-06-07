@@ -71,13 +71,11 @@ PUBLIC void *memcpy(void *dst, const void *src, size_t size);
 PUBLIC int memcmp(const void *buf1, const void *buf2, size_t size);
 PUBLIC void *memmem(const void *buf1, size_t size1, const void *buf2, size_t size2);
 
-PUBLIC void clock_handler(int irq);
-PUBLIC int sys_get_ticks();
-
 PUBLIC char *ultoa(unsigned long val, char *buf, int radix);
 PUBLIC int kputchar (int chr);
 PUBLIC int kprintf (const char *format, ...);
 
+PUBLIC int vsprintf (char *buf, const char *fmt, va_list args);
 PUBLIC int sprintf (char *buf, const char *fmt, ...);
 PUBLIC int printf (const char *fmt, ...);
 
