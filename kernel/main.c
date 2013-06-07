@@ -24,7 +24,7 @@ PUBLIC int kernel_main()
 
 {
 	kprintf("-----\"kernel_main\" begins-----\n");
-	
+
 	TASK *p_task;
 	PROCESS *p_proc	= proc_table;
 
@@ -106,13 +106,8 @@ PUBLIC int kernel_main()
 	k_reenter = 0;
 	p_proc_ready = proc_table;
 
-	// 初始化 8253 PIT 
-	outb(TIMER_MODE, RATE_GENERATOR);
-	outb(TIMER0, (u8_t)(TIMER_FREQ / HZ));
-	outb(TIMER0, (u8_t)((TIMER_FREQ / HZ) >> 8));
-
-    put_irq_handler(CLOCK_IRQ, clock_handler); // 设定时钟中断处理程序
-    enable_irq(CLOCK_IRQ);                     // 让8259A可以接收时钟中断
+    init_clock();
+    init_keyboard();
 
 	restart();
 
@@ -151,7 +146,9 @@ PUBLIC void milli_delay(int milli_sec)
 PUBLIC void TestA()
 {
 	while (1) {
-		kprintf("<--A,ticks:%d-->", get_ticks());
+        /*
+         *kprintf("<--A,ticks:%d-->", get_ticks());
+         */
 		delay(1);
 		//milli_delay(500);
 	}
@@ -160,7 +157,9 @@ PUBLIC void TestA()
 PUBLIC void TestB()
 {
 	while (1) {
-		kprintf("<B>");
+        /*
+		 *kprintf("<B>");
+         */
 		delay(1);
 		//milli_delay(200);
 	}
@@ -169,7 +168,9 @@ PUBLIC void TestB()
 PUBLIC void TestC()
 {
 	while (1) {
-		kprintf("<C>");
+        /*
+		 *kprintf("<C>");
+         */
 		delay(1);
 		//milli_delay(200);
 	}
@@ -187,7 +188,9 @@ PUBLIC void task_sys()
 			msg.retval = ticks;
 
 			/*这句竟然会影响msg的值，去掉之后msg居然不正确了！！！！！*/
-			kprintf("<task_sys,%d,%d,%d>", msg.type, msg.source, msg.retval);
+            /*
+             *kprintf("<task_sys,%d,%d,%d>", msg.type, msg.source, msg.retval);
+             */
 
 			send_recv(SEND, src, &msg);
 			break;

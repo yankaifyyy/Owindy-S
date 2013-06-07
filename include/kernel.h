@@ -4,4 +4,8 @@
 PUBLIC void restart();
 PUBLIC void sys_call();
 
+PUBLIC void init_clock();
+PUBLIC void init_vga();
+PUBLIC void init_keyboard();
+
 #endif

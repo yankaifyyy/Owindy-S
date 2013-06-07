@@ -74,6 +74,13 @@ PUBLIC char *ultoa(unsigned long val, char *buf, int radix) {
 		*buf++ = rem + (rem < 10 ? '0' : lbase);
 	} while (val /= radix);
 
+    if (radix == 8) {
+        *buf++ = '0';
+    } else if (radix == 16) {
+        *buf++ = 'x';
+        *buf++ = '0';
+    }
+
 	*buf = 0;
 	return strrev(str);
 }
