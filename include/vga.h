@@ -24,6 +24,16 @@
 #define VGA_ROWS_NUMBER 25
 #define VGA_COLS_NUMBER 80
 
+#define VGA_ADDR_REG    0x3D4
+#define VGA_DATA_REG    0x3D5
+#define START_ADDR_H    0xC
+#define START_ADDR_L    0xD
+#define CURSOR_H        0xE
+#define CURSOR_L        0xF
+
+#define VIDEO_ADDR      0xB8000
+#define VIDEO_SIZE      0x8000
+
 // low level API (no concern of frames)
 PRIVATE void get_vga_cell(int row, int col, char *chr, int *fore_color,
                   int *back_color);

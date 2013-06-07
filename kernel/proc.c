@@ -66,9 +66,7 @@ PUBLIC void *va2la(int pid, void *va) // 由虚拟地址求线性地址
 
 PUBLIC int msg_send(PROCESS *current, int dest, MESSAGE *m)
 {
-    /*
-     *kprintf("<send,%d,%d>", proc2pid(current), dest);
-     */
+    kprintf("<send,%d,%d>", proc2pid(current), dest);
 
 	PROCESS *sender = current;
 	PROCESS *p_dest = proc_table + dest;
@@ -85,9 +83,7 @@ PUBLIC int msg_send(PROCESS *current, int dest, MESSAGE *m)
 		p_dest->p_flags &= ~RECEIVING; // dest恢复运行
 		p_dest->p_recvfrom = NO_TASK;
 
-        /*
-         *kprintf("<unblock,%d>", dest);
-         */
+        kprintf("<unblock,%d>", dest);
 	} 
 	else {
 		sender->p_flags |= SENDING;
@@ -115,9 +111,7 @@ PUBLIC int msg_send(PROCESS *current, int dest, MESSAGE *m)
 
 PUBLIC int msg_receive(PROCESS *current, int src, MESSAGE *m)
 {
-    /*
-     *kprintf("<receive,%d,%d>", proc2pid(current), src);
-     */
+    kprintf("<receive,%d,%d>", proc2pid(current), src);
 
 	PROCESS *receiver = current;
 	PROCESS *p_from = 0;
@@ -173,9 +167,7 @@ PUBLIC int msg_receive(PROCESS *current, int src, MESSAGE *m)
 		receiver->p_msg = m;
 		receiver->p_recvfrom = src;
 
-        /*
-         *kprintf("<block,%d>", proc2pid(receiver));
-         */
+        kprintf("<block,%d>", proc2pid(receiver));
 
 		schedule(); // receiver被阻塞，进行调度
 	}
@@ -202,9 +194,7 @@ PUBLIC int sys_sendrec(int function, int src_dest, MESSAGE *m, PROCESS *p)
 			return ret;
 	}
 	else {
-        /*
-         *kprintf("Invalid function type in sys_sendrec!!!");
-         */
+        kprintf("Invalid function type in sys_sendrec!!!");
 	}
 
 	return 0;
@@ -224,16 +214,12 @@ PUBLIC int send_recv(int function, int src_dest, MESSAGE *m)
 			MESSAGE *msg = (MESSAGE *)va2la(caller, m); // 实践证明直接把m赋给msg是不行的！
 
 			//kprintf("<m1,%d>", m);
-            /*
-             *kprintf("<msg1,%d>", msg); // msg1，msg2输出居然也会影响msg！！！！！
-             */
+            kprintf("<msg1,%d>", msg); // msg1，msg2输出居然也会影响msg！！！！！
 
 			ret = sendrec(SEND, src_dest, m); // m在msg_send最后还是正常的！
 
 			//kprintf("<m2,%d>", m); // m莫名其妙地变了！！！！！
-            /*
-             *kprintf("<msg2,%d>", msg);
-             */
+            kprintf("<msg2,%d>", msg);
 
 			if (!ret)
 				ret = sendrec(RECEIVE, src_dest, msg);
@@ -244,9 +230,7 @@ PUBLIC int send_recv(int function, int src_dest, MESSAGE *m)
 		ret = sendrec(function, src_dest, m);
 		break;
 	default:
-        /*
-         *kprintf("Invalid function type in send_recv!!!");
-         */
+        kprintf("Invalid function type in send_recv!!!");
 		break;
 	}
 		

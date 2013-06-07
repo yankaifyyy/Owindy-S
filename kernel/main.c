@@ -12,8 +12,8 @@
 #include "tty.h"
 
 PUBLIC TASK task_table[NR_TASKS] = {
-	{task_sys, STACK_SIZE_SYS, "SYS"},
-    {task_tty, STACK_SIZE_TTY, "tty"}
+	/*{task_sys, STACK_SIZE_SYS, "SYS"},*/
+    {task_tty, STACK_SIZE_SYS, "TTY"}
 };
 
 PUBLIC TASK user_proc_table[NR_PROCS] = {
@@ -48,9 +48,9 @@ PUBLIC int kernel_main()
 		}
 		else {
 			p_task = user_proc_table + (i - NR_TASKS);
-			privilege = PRIVILEGE_TASK;
-			rpl = RPL_TASK;
-			eflags = 0x1202; // IF = 1
+			privilege = PRIVILEGE_USER;
+			rpl = RPL_USER;
+			eflags = 0x202; // IF = 1
 
 			priority = 5;
 		}
@@ -109,7 +109,6 @@ PUBLIC int kernel_main()
 	p_proc_ready = proc_table;
 
     init_clock();
-    init_keyboard();
 
 	restart();
 
@@ -160,7 +159,7 @@ PUBLIC void TestB()
 {
 	while (1) {
         /*
-		 *kprintf("<B>");
+         *kprintf("<B>");
          */
 		delay(1);
 		//milli_delay(200);
@@ -180,24 +179,22 @@ PUBLIC void TestC()
 
 PUBLIC void task_sys()
 {
-	MESSAGE msg;
-	while (1) {
-		send_recv(RECEIVE, ANY, &msg);
-		int src = msg.source;
+    MESSAGE msg;
+    while (1) {
+        send_recv(RECEIVE, ANY, &msg);
+        int src = msg.source;
 
-		switch (msg.type) {
-		case GET_TICKS:
-			msg.retval = ticks;
+        switch (msg.type) {
+        case GET_TICKS:
+            msg.retval = ticks;
 
-			/*这句竟然会影响msg的值，去掉之后msg居然不正确了！！！！！*/
-            /*
-             *kprintf("<task_sys,%d,%d,%d>", msg.type, msg.source, msg.retval);
-             */
+            /*[>这句竟然会影响msg的值，去掉之后msg居然不正确了！！！！！<]*/
+            kprintf("<task_sys,%d,%d,%d>", msg.type, msg.source, msg.retval);
 
-			send_recv(SEND, src, &msg);
-			break;
-		default:
-			break;
-		}
-	}
+            send_recv(SEND, src, &msg);
+            break;
+        default:
+            break;
+        }
+    }
 }

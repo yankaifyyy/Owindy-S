@@ -119,9 +119,9 @@
 /************************************************************************/
 /* Keyboard structure, 1 per console. */
 typedef struct s_kb {
-    int count;
 	char*	p_head;			/* 指向缓冲区中下一个空闲位置 */
 	char*	p_tail;			/* 指向键盘任务应处理的字节 */
+    int     count;
 	char	buf[KB_IN_BYTES];	/* 缓冲区 */
 }KB_INPUT;
 

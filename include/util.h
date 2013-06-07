@@ -78,4 +78,7 @@ PUBLIC char *ultoa(unsigned long val, char *buf, int radix);
 PUBLIC int kputchar (int chr);
 PUBLIC int kprintf (const char *format, ...);
 
+PUBLIC int sprintf (char *buf, const char *fmt, ...);
+PUBLIC int printf (const char *fmt, ...);
+
 #endif // UTIL_H
