@@ -176,7 +176,7 @@ typedef struct s_tss {
 #define TIMER_MODE 0x43
 #define RATE_GENERATOR 0x34
 #define TIMER_FREQ 1193182L
-#define HZ 10
+#define HZ 100
 
 //-------------------进程---------------------
 // 每个任务的LDT中描述符的个数和种类
@@ -185,10 +185,11 @@ typedef struct s_tss {
 #define INDEX_LDT_RW 1
 
 // number of tasks and procs
-#define NR_TASKS 1
+#define NR_TASKS 2
 #define NR_PROCS 3
 
 #define TASK_SYS 0
+#define TASK_TTY 1
 
 #define ANY (NR_TASKS + NR_PROCS + 10)
 #define NO_TASK	(NR_TASKS + NR_PROCS + 20)
@@ -201,6 +202,7 @@ typedef struct s_tss {
 #define STACK_SIZE_TESTC 0x8000
 
 #define STACK_SIZE_TOTAL (STACK_SIZE_SYS + \
+				STACK_SIZE_TTY + \
 				STACK_SIZE_TESTA + \
 				STACK_SIZE_TESTB + \
 				STACK_SIZE_TESTC)
@@ -209,6 +211,9 @@ typedef struct s_tss {
 #define SEND    1
 #define RECEIVE	2
 #define BOTH	3 // BOTH = SEND | RECEIVE
+
+#define	PID	u.m3.m3i2
+#define RETVAL u.m3.m3i1
 
 //进程状态
 #define SENDING 0x02

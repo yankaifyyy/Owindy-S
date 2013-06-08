@@ -13,8 +13,8 @@
 #include "tty.h"
 
 PUBLIC TASK task_table[NR_TASKS] = {
-    {task_tty, STACK_SIZE_TTY, "TTY"},
-    {task_sys, STACK_SIZE_SYS, "SYS"}
+    {task_sys, STACK_SIZE_SYS, "SYS"},
+    {task_tty, STACK_SIZE_TTY, "TTY"}
 };
 
 PUBLIC TASK user_proc_table[NR_PROCS] = {
@@ -47,11 +47,14 @@ PUBLIC int kernel_main()
 
 			priority = 15;
 		}
-		else {
+		else { 
+			/* wind4869: 用户进程不能使用kprintf()
+			 * yankai: 用户进程可以使用kprintf()
+			 */
 			p_task = user_proc_table + (i - NR_TASKS);
-			privilege = PRIVILEGE_USER;
-			rpl = RPL_USER;
-			eflags = 0x202; // IF = 1
+			privilege = PRIVILEGE_TASK;
+			rpl = RPL_TASK;
+			eflags = 0x1202; // IF = 1
 
 			priority = 5;
 		}
@@ -125,7 +128,7 @@ PUBLIC int get_ticks()
 	msg.type = GET_TICKS;
 	send_recv(BOTH, TASK_SYS, &msg);
 	
-	return msg.retval;
+	return msg.RETVAL;
 }
 
 PUBLIC void delay(int time)
@@ -181,10 +184,10 @@ PUBLIC void task_sys()
 
         switch (msg.type) {
         case GET_TICKS:
-            msg.retval = ticks;
+            msg.RETVAL = ticks;
 
             /*[>这句竟然会影响msg的值，去掉之后msg居然不正确了！！！！！<]*/
-            kprintf("<task_sys,%d,%d,%d>", msg.type, msg.source, msg.retval);
+            kprintf("<task_sys,%d,%d,%d>", msg.type, msg.source, msg.RETVAL);
 
             send_recv(SEND, src, &msg);
             break;

@@ -2,7 +2,7 @@ CC =gcc
 LD =ld
 AS =nasm
 ASFLAGS =-f elf -I../include
-CFLAGS =-g -Wall -O2 -fomit-frame-pointer -c -I../include -m32 -std=gnu99
+CFLAGS =-g -Wall -O2 -fomit-frame-pointer -c -I../include -m32 -std=gnu99 -fno-stack-protector
 
 .PHONY : clean
 
