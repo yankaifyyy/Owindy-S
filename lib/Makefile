@@ -8,7 +8,7 @@ CFLAGS =-g -Wall -O2 -fomit-frame-pointer -c -I../include -m32 -std=gnu99 -fno-s
 
 default : util.o alib.o
 
-util.o : util.c
+util.o : util.c 
 	$(CC) $< $(CFLAGS) -o util.o
 
 alib.o : alib.asm

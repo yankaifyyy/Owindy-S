@@ -78,6 +78,8 @@ typedef struct proc {
 	DESCRIPTOR ldts[LDT_SIZE];
 
 	u32_t pid;     
+	int p_parent;
+
     int ticks;      
     int priority;
 	char p_name[16];

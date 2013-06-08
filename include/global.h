@@ -24,6 +24,9 @@ PUBLIC irq_handler irq_table[NR_IRQ];
 
 PUBLIC int ticks;
 
+// MM 
+PUBLIC MESSAGE mm_msg;
+
 // 由进程指针求进程号
 #define proc2pid(x)(x - proc_table)
 

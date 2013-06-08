@@ -20,5 +20,7 @@ PUBLIC int get_ticks();
 PUBLIC int sys_write(char *buf, int len, PROCESS *p_proc);
 PUBLIC void write(char *buf, int len);
 
+PUBLIC int send_recv(int function, int src_dest, MESSAGE *m);
+
 #endif
 

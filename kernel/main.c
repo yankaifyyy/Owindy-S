@@ -119,8 +119,6 @@ PUBLIC int kernel_main()
 	while(1) {}
 }
 
-PUBLIC int send_recv(int function, int src_dest, MESSAGE *m);
-
 PUBLIC int get_ticks()
 {
 	MESSAGE msg;

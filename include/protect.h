@@ -12,7 +12,7 @@ typedef struct s_descriptor {
 	u16_t	base_low;
 	u8_t	base_mid;
 	u8_t	attr1;//P(1) DPL(2) S(1) TYPE(4)
-	u8_t	limit_high_attr2;//G(1) D(1) 0(1) AVL(1) light_high(4)
+	u8_t	limit_high_attr2;//G(1) D(1) 0(1) AVL(1) limit_high(4)
 	u8_t	base_high;
 } DESCRIPTOR;
 
@@ -84,6 +84,9 @@ typedef struct s_tss {
 // 描述符类型值说明
 #define	DA_32		0x4000	// 32位段
 #define	DA_LIMIT_4K	0x8000	// 段界限粒度为4K字节
+
+#define	LIMIT_4K_SHIFT 12   // <<<<<<<<<<
+
 #define	DA_DPL0		0x00	// DPL = 0
 #define	DA_DPL1		0x20	// DPL = 1
 #define	DA_DPL2		0x40	// DPL = 2
@@ -187,12 +190,19 @@ typedef struct s_tss {
 // number of tasks and procs
 #define NR_TASKS 2
 #define NR_PROCS 3
+#define NR_NATIVE_PROCS 3
 
 #define TASK_SYS 0
 #define TASK_TTY 1
+#define TASK_MM  2
 
 #define ANY (NR_TASKS + NR_PROCS + 10)
 #define NO_TASK	(NR_TASKS + NR_PROCS + 20)
+
+// mem for procs
+#define	PROCS_BASE		  0xA00000 // 10 MB 
+#define	PROC_DEFAULT_MEM  0x100000 // 1 MB
+#define	PROC_ORIGIN_STACK 0x400    // 1 KB
 
 // stacks of tasks
 #define STACK_SIZE_SYS   0x8000
@@ -218,6 +228,7 @@ typedef struct s_tss {
 //进程状态
 #define SENDING 0x02
 #define RECEIVING 0x04
+#define EMPTY 0x08
 
 // 函数声明
 PUBLIC void init_prot();
@@ -238,5 +249,6 @@ PUBLIC void TestA();
 PUBLIC void TestB();
 PUBLIC void TestC();
 PUBLIC void task_sys();
+PUBLIC void task_mm();
 
 #endif

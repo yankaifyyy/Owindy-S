@@ -34,6 +34,8 @@ bootloader : $(BOOT_BIN) $(LDR_BIN)
 
 lib :
 	(cd lib; make)
+mm :
+	(cd mm; make)
 
 kernel : $(KERNEL_BIN)
 	sudo mount -o loop $(IMG) $(MOUNT_POINT)
@@ -61,4 +63,5 @@ clean :
 	rm -rf $(BOOT_BIN) $(LDR_BIN)
 	rm -rf bootloader/*.o
 	(cd kernel; make clean)
+	(cd mm; make clean)
 	(cd lib; make clean)

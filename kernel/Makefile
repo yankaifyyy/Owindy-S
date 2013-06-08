@@ -17,8 +17,8 @@ KERNEL_SRC := kernel.asm
 
 default : $(KERNEL_SYS)
 
-$(KERNEL_SYS) : kernel.o start.o main.o protect.o proc.o syscall.o clock.o vga.o keyboard.o tty.o 
-	$(LD) $(LDFLAGS) kernel.o start.o main.o protect.o proc.o syscall.o clock.o vga.o keyboard.o tty.o ../lib/alib.o ../lib/util.o -o $@
+$(KERNEL_SYS) : kernel.o start.o main.o protect.o proc.o syscall.o clock.o vga.o keyboard.o tty.o ../mm/fork.o ../mm/main.o
+	$(LD) $(LDFLAGS) kernel.o start.o main.o protect.o proc.o syscall.o clock.o vga.o keyboard.o tty.o ../lib/alib.o ../lib/util.o ../mm/fork.o ../mm/main.o -o $@
 
 kernel.o : kernel.asm ../include/asm/kconst.inc
 	$(AS) $< $(ASFLAGS) -o $@
