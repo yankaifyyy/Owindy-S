@@ -163,8 +163,8 @@ PUBLIC void init_prot()
 	int i;
 	PROCESS* p_proc	= proc_table;
 	u16_t selector_ldt = INDEX_LDT_FIRST << 3;
-	for (i = 0;i < NR_TASKS + NR_PROCS; i++){
-		init_descriptor(&gdt[selector_ldt>>3],
+	for (i = 0; i < NR_TASK_PROCS; i++) {
+		init_descriptor(&gdt[selector_ldt >> 3],
 				vir2phys(seg2phys(SELECTOR_KERNEL_DS),
 					proc_table[i].ldts),
 				LDT_SIZE * sizeof(DESCRIPTOR) - 1,
@@ -209,7 +209,7 @@ PRIVATE void init_idt_desc(unsigned char vector, u8_t desc_type,
 	p_gate->offset_high	= (base >> 16) & 0xFFFF;
 }
 
-PRIVATE void init_descriptor(DESCRIPTOR * p_desc, u32_t base, u32_t limit, u16_t attribute)
+PUBLIC void init_descriptor(DESCRIPTOR * p_desc, u32_t base, u32_t limit, u16_t attribute)
 {
 	p_desc->limit_low = limit & 0x0FFFF;		// 段界限 1		(2 字节)
 	p_desc->base_low = base & 0x0FFFF;		// 段基址 1		(2 字节)
@@ -245,7 +245,7 @@ PUBLIC void exception_handler(int vec_no, int err_code, int eip, int cs, int efl
 			    "#XF SIMD Floating-Point Exception"
 	};
 
-	kprintf(err_msg[vec_no]);
+	kprintf("\n%s\nEFLAGS:%x\nCS:%x\nEIP:%x\n",err_msg[vec_no], eflags, cs, eip);
 }
 
 PUBLIC void spurious_irq(int irq)

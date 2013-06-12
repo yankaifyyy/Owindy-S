@@ -179,7 +179,7 @@ typedef struct s_tss {
 #define TIMER_MODE 0x43
 #define RATE_GENERATOR 0x34
 #define TIMER_FREQ 1193182L
-#define HZ 100
+#define HZ 10
 
 //-------------------进程---------------------
 // 每个任务的LDT中描述符的个数和种类
@@ -188,16 +188,22 @@ typedef struct s_tss {
 #define INDEX_LDT_RW 1
 
 // number of tasks and procs
-#define NR_TASKS 2
-#define NR_PROCS 3
-#define NR_NATIVE_PROCS 3
+#define NR_TASKS 2 // 系统任务数
+#define NR_PROCS 32 // 最多32个用户进程
+#define NR_NATIVE_PROCS 4 // 三个test进程+Init
 
+// 任务和进程的总数
+#define NR_TASK_PROCS (NR_TASKS + NR_PROCS)
+
+// 工作在ring1的任务
 #define TASK_SYS 0
-#define TASK_TTY 1
-#define TASK_MM  2
+//#define TASK_TTY 1
+#define TASK_MM  1
 
-#define ANY (NR_TASKS + NR_PROCS + 10)
-#define NO_TASK	(NR_TASKS + NR_PROCS + 20)
+#define INIT     2
+
+#define ANY (NR_TASK_PROCS + 10)
+#define NO_TASK	(NR_TASK_PROCS + 20)
 
 // mem for procs
 #define	PROCS_BASE		  0xA00000 // 10 MB 
@@ -205,14 +211,18 @@ typedef struct s_tss {
 #define	PROC_ORIGIN_STACK 0x400    // 1 KB
 
 // stacks of tasks
-#define STACK_SIZE_SYS   0x8000
-#define STACK_SIZE_TTY   0x8000
-#define STACK_SIZE_TESTA 0x8000
-#define STACK_SIZE_TESTB 0x8000
-#define STACK_SIZE_TESTC 0x8000
+#define STACK_SIZE_DEFAULT 0x4000 // 16KB
+#define STACK_SIZE_SYS   STACK_SIZE_DEFAULT 
+#define STACK_SIZE_TTY   STACK_SIZE_DEFAULT 
+#define STACK_SIZE_MM	 STACK_SIZE_DEFAULT 
+#define STACK_SIZE_INIT  STACK_SIZE_DEFAULT
+#define STACK_SIZE_TESTA STACK_SIZE_DEFAULT 
+#define STACK_SIZE_TESTB STACK_SIZE_DEFAULT 
+#define STACK_SIZE_TESTC STACK_SIZE_DEFAULT 
 
 #define STACK_SIZE_TOTAL (STACK_SIZE_SYS + \
-				STACK_SIZE_TTY + \
+				STACK_SIZE_MM + \
+				STACK_SIZE_INIT + \
 				STACK_SIZE_TESTA + \
 				STACK_SIZE_TESTB + \
 				STACK_SIZE_TESTC)
@@ -236,7 +246,7 @@ PUBLIC u32_t seg2phys(u16_t seg);
 PUBLIC void init_8259A();
 PRIVATE void init_idt_desc(u8_t vector, u8_t desc_type,
 		int_handler handler, u8_t privilege);
-PRIVATE void init_descriptor(DESCRIPTOR* p_desc, u32_t base, u32_t limit, u16_t attribute);
+PUBLIC void init_descriptor(DESCRIPTOR* p_desc, u32_t base, u32_t limit, u16_t attribute);
 PUBLIC void exception_handler(int vec_no, int err_code, int eip,
 		int cs, int eflags);
 PUBLIC void spurious_irq(int irq);
@@ -245,6 +255,7 @@ PUBLIC void put_irq_handler(int irq, irq_handler handler);
 PUBLIC void disable_irq(int irq);
 PUBLIC void enable_irq(int irq);
 
+PUBLIC void Init();
 PUBLIC void TestA();
 PUBLIC void TestB();
 PUBLIC void TestC();

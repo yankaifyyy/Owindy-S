@@ -11,15 +11,13 @@
 #include "kernel.h"
 #include "util.h"
 
-PUBLIC int sendrec(int function, int src_dest, MESSAGE *m);
-
 PUBLIC void schedule()
 {
 	PROCESS *p;
 	int	greatest_ticks = 0;
 
 	while (!greatest_ticks) {
-		for (p = proc_table; p < proc_table + NR_TASKS + NR_PROCS; p++)
+		for (p = proc_table; p < proc_table + NR_TASK_PROCS; p++)
 			if (p->p_flags == 0)
 				if (p->ticks > greatest_ticks) {
 					greatest_ticks = p->ticks;
@@ -31,15 +29,15 @@ PUBLIC void schedule()
 				if (p->p_flags == 0)
 					p->ticks = p->priority;
 	}
+
 }
 
 PUBLIC void clock_handler(int irq)
 {
 	ticks++;
-
-    kprintf("<%d>", ticks);
-
 	p_proc_ready->ticks--;
+
+	kprintf("<clock,%d>", p_proc_ready - proc_table);
 
 	if (k_reenter != 0) {
 		return;
@@ -51,6 +49,8 @@ PUBLIC void clock_handler(int irq)
 
 	schedule();
 }
+
+/* 这个函数在fork()的时候用以分别父子进程的同名变量msg，貌似！ */
 
 PUBLIC void *va2la(int pid, void *va) // 由虚拟地址求线性地址
 {
@@ -222,7 +222,7 @@ PUBLIC int send_recv(int function, int src_dest, MESSAGE *m)
 
 			if (!ret)
 				ret = sendrec(RECEIVE, src_dest, msg);
-			break;
+			break; // 理论上，子进程应该从sendrec中ret到这里！
 		}
 	case SEND:
 	case RECEIVE:

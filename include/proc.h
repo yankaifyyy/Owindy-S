@@ -47,7 +47,8 @@ typedef struct {
 // 消息类型
 enum msgtype {
 	GET_TICKS = 1,
-	FORK
+	FORK,
+	SYSCALL_RET
 };
 
 typedef struct stackframe {
