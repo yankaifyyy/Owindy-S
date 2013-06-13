@@ -229,13 +229,9 @@ PUBLIC int send_recv(int function, int src_dest, MESSAGE *m)
 			int caller = proc2pid(p_proc_ready);		// 取m的线性地址保存到msg！
 			MESSAGE *msg = (MESSAGE *)va2la(caller, m); // 实践证明直接把m赋给msg是不行的！
 
-			//kprintf("<m1,%d>", m);
-            kprintf("<msg1,%d>", msg); // msg1，msg2输出居然也会影响msg！！！！！
+            kprintf("\n<send_recv:%x>\n", msg); // kprintf 确保msg正确
 
-			ret = sendrec(SEND, src_dest, m); // m在msg_send最后还是正常的！
-
-			//kprintf("<m2,%d>", m); // m莫名其妙地变了！！！！！
-            kprintf("<msg2,%d>", msg);
+			ret = sendrec(SEND, src_dest, m);
 
 			if (!ret)
 				ret = sendrec(RECEIVE, src_dest, msg);

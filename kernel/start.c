@@ -13,7 +13,6 @@
 PUBLIC void cstart()
 {
 	init_vga();
-	kprintf("---------------^_^ Hi, Owindy'S!--------------\n");
 
 	memcpy(&gdt,
 			(void*)(*((u32_t*)(&gdt_ptr[2]))),
@@ -31,6 +30,4 @@ PUBLIC void cstart()
 	*p_idt_base = (u32_t)&idt;
 	
 	init_prot();
-
-	kprintf("---------------Bye...(~^o^~)---------------\n");
 }

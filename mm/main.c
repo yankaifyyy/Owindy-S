@@ -16,28 +16,29 @@ PUBLIC int do_fork()
 	int i;
 	PROCESS *p = proc_table;
 
+	/* 寻找proc_table中的空闲位置，放置子进程 */
+
 	for (i = 0; i < NR_TASK_PROCS; i++, p++)
 		if (p->p_flags == EMPTY)
 			break;
 
-	if (i == NR_TASK_PROCS) // proc_table已满，fork不成功
+	if (i == NR_TASK_PROCS)
 		return -1;
 
 	int child_pid = i;
 	int parent_pid = mm_msg.source;
 
-	u16_t child_ldt_sel = p->ldt_sel; // 暂存子进程的 LDT 选择子
+	u16_t child_ldt_sel = p->ldt_sel;
+	*p = proc_table[parent_pid];
 
-	*p = proc_table[parent_pid]; // 复制父进程的进程表给子进程
-
-	p->ldt_sel = child_ldt_sel; // 重新初始化子进程的 LDT 选择子
-	p->ticks = 15;
-
+	p->ldt_sel = child_ldt_sel;
 	p->p_parent = parent_pid; 
 
-	kprintf("<do_fork:%x,%x>", p->regs.eip, p->ldt_sel);
+	p->ticks = 15; // 改变时间片，使子进程优先运行
 
-	/* 下面通过读取父进程的ldt，得到父进程内存占用情况 */
+	kprintf("\n<do_fork:%x,%x>\n", p->regs.eip, p->ldt_sel);
+
+	/* 通过读取父进程的ldt，得到父进程内存占用情况 */
 
 	DESCRIPTOR *parent_ldt = &proc_table[parent_pid].ldts[INDEX_LDT_C];
 
@@ -49,18 +50,20 @@ PUBLIC int do_fork()
 		parent_ldt->base_mid << 16 | parent_ldt->base_low;
 
 	/* 给子进程分配内存, 代码、数据、堆栈共用 */
-	if (parent_size > PROC_DEFAULT_MEM) {
+
+/*	if (parent_size > PROC_DEFAULT_MEM) {
 		kprintf("The memory applied is too large!");
 		return -1;
 	} // 这种情况是不可能发生的！
-
+*/
 	int child_base = PROCS_BASE + (child_pid - (NR_TASKS + NR_NATIVE_PROCS)) * PROC_DEFAULT_MEM;
 /*
 	if (child_base + parent_size >= memory_size) {
 		kprintf("Memory is running out!");
 		return -1;
-	} 没有获取内存的大小，所以没考虑内存耗尽！
+	} // 没有获取内存的大小，所以没考虑内存耗尽！
 */
+
 	/* 拷贝父进程内存空间到子进程内存空间 */
 	memcpy((void *)child_base, (void *)parent_base, parent_size);
 

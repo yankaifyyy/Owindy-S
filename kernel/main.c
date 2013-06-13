@@ -14,7 +14,7 @@
 
 PUBLIC TASK task_table[NR_TASKS] = {
     {task_sys, STACK_SIZE_SYS, "SYS"},
-    //{task_tty, STACK_SIZE_TTY, "TTY"},
+    {task_tty, STACK_SIZE_TTY, "TTY"},
 	{task_mm,  STACK_SIZE_MM,  "MM"}
 };
 
@@ -27,7 +27,7 @@ PUBLIC TASK user_proc_table[NR_NATIVE_PROCS] = {
 
 PUBLIC int kernel_main()
 {
-	kprintf("-----\"kernel_main\" begins-----\n");
+	kprintf("\n<====================Welcome to Owindy-S====================>\n\n\n");
 
 	TASK *p_task;
 	PROCESS *p_proc	= proc_table;
@@ -114,7 +114,7 @@ PUBLIC int kernel_main()
 		p_proc->ticks = p_proc->priority = priority;
 
 		// 初始化消息传递的相关属性
-		p_proc->p_flags = (i < 3) ? 0 : 1; // 屏蔽A，B，C
+		p_proc->p_flags = (i == TASK_MM || i == INIT) ? 0 : 1; // 只运行task_mm跟Init, 不知道为什么task_tty也在运行
 		p_proc->p_msg = 0;
 		p_proc->p_recvfrom = NO_TASK;
 		p_proc->p_sendto = NO_TASK;
@@ -166,28 +166,26 @@ PUBLIC void milli_delay(int milli_sec)
 
 PUBLIC void Init()
 {
-	kprintf("\n<--------------------Init start-------------------->\n");
+	kprintf("\n<====================Init() start====================>\n");
 
 	int pid = fork();
 
+	kprintf("\n<Init:%d,%d>\n", p_proc_ready - proc_table, pid);
+
 	if (pid != 0) {
-		kprintf("\n<----------parent is running, child pid:%d---------->\n", pid);
+		kprintf("\n<===========parent is running, child pid:%d===========>\n", pid);
 	} 
 	else {
-		kprintf("\n<------------------child is running----------------->\n");
+		kprintf("\n<==============child is running, pid:%d===============>\n", p_proc_ready - proc_table);
 	}
 
-	while (1) {
-		kprintf("<while:%d>", p_proc_ready - proc_table);
-		delay(1);
-	}
+	while (1) {}
 }
 
 PUBLIC void TestA()
 {
 	while (1) {
-		kprintf("<A>");
-        //kprintf("<--A,ticks:%d-->", get_ticks());
+        kprintf("<--A,ticks:%d-->", get_ticks());
 		delay(1);
 		//milli_delay(500);
 	}

@@ -188,7 +188,7 @@ typedef struct s_tss {
 #define INDEX_LDT_RW 1
 
 // number of tasks and procs
-#define NR_TASKS 2 // 系统任务数
+#define NR_TASKS 3 // 系统任务数
 #define NR_PROCS 32 // 最多32个用户进程
 #define NR_NATIVE_PROCS 4 // 三个test进程+Init
 
@@ -199,10 +199,10 @@ typedef struct s_tss {
 #define INTERRUPT -10
 
 #define TASK_SYS 0
-//#define TASK_TTY 1
-#define TASK_MM  1
+#define TASK_TTY 1
+#define TASK_MM  2
 
-#define INIT     2
+#define INIT     3
 
 #define ANY (NR_TASK_PROCS + 10)
 #define NO_TASK	(NR_TASK_PROCS + 20)
@@ -223,6 +223,7 @@ typedef struct s_tss {
 #define STACK_SIZE_TESTC STACK_SIZE_DEFAULT 
 
 #define STACK_SIZE_TOTAL (STACK_SIZE_SYS + \
+				STACK_SIZE_TTY + \
 				STACK_SIZE_MM + \
 				STACK_SIZE_INIT + \
 				STACK_SIZE_TESTA + \
