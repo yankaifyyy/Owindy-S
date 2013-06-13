@@ -235,13 +235,31 @@ typedef struct s_tss {
 #define RECEIVE	2
 #define BOTH	3 // BOTH = SEND | RECEIVE
 
-#define	PID	u.m3.m3i2
-#define RETVAL u.m3.m3i1
+// macros for messages
+#define	FD		 u.m3.m3i1
+#define	PATHNAME u.m3.m3p1
+#define	FLAGS	 u.m3.m3i1
+#define	NAME_LEN u.m3.m3i2
+#define	BUF_LEN	 u.m3.m3i3
+#define	CNT      u.m3.m3i2
+#define	REQUEST	 u.m3.m3i2
+#define	PROC_NR	 u.m3.m3i3
+#define	DEVICE	 u.m3.m3i4
+#define	POSITION u.m3.m3l1
+#define	BUF		 u.m3.m3p2
+#define	OFFSET	 u.m3.m3i2
+#define	WHENCE	 u.m3.m3i3
+
+#define	PID		 u.m3.m3i2
+#define	STATUS	 u.m3.m3i1
+#define	RETVAL	 u.m3.m3i1
 
 //进程状态
-#define SENDING 0x02
+#define SENDING   0x02
 #define RECEIVING 0x04
-#define EMPTY 0x08
+#define WAITING   0x08 // 等待子进程退出
+#define HANGING   0x10 // 在不被父进程等待的情况下退出
+#define EMPTY 	  0x20
 
 // 函数声明
 PUBLIC void init_prot();

@@ -98,6 +98,8 @@ typedef struct proc {
 
 	struct proc *q_sending; // 消息发送队列
 	struct proc *next_sending;
+
+    int exit_status; 
 } PROCESS;
 
 typedef struct task {
