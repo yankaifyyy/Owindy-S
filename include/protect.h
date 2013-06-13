@@ -195,7 +195,9 @@ typedef struct s_tss {
 // 任务和进程的总数
 #define NR_TASK_PROCS (NR_TASKS + NR_PROCS)
 
-// 工作在ring1的任务
+// 系统任务
+#define INTERRUPT -10
+
 #define TASK_SYS 0
 //#define TASK_TTY 1
 #define TASK_MM  1

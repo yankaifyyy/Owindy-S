@@ -46,8 +46,13 @@ typedef struct {
 
 // 消息类型
 enum msgtype {
-	GET_TICKS = 1,
-	FORK,
+
+	HARD_INT = 1,
+
+	GET_TICKS, GET_PID,
+
+	FORK, EXIT, WAIT, EXEC,
+
 	SYSCALL_RET
 };
 
@@ -78,7 +83,6 @@ typedef struct proc {
 	u16_t ldt_sel;    
 	DESCRIPTOR ldts[LDT_SIZE];
 
-	u32_t pid;     
 	int p_parent;
 
     int ticks;      
@@ -90,7 +94,7 @@ typedef struct proc {
 	int p_recvfrom; // 要从该进程接收消息
 	int p_sendto; // 要发送消息给该进程
 
-	//int has_int_msg; // 不太了解有什么用???
+	int has_int_msg; // 是否有中断需要处理
 
 	struct proc *q_sending; // 消息发送队列
 	struct proc *next_sending;

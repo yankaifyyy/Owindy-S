@@ -93,7 +93,6 @@ PUBLIC int do_fork()
 PUBLIC void task_mm()
 {
 	while (1) {
-		kprintf("<task_mm>"); // 诡异kprintf，修正ANY
 		send_recv(RECEIVE, ANY, &mm_msg);
 
 		switch (mm_msg.type) {

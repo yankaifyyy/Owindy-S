@@ -118,6 +118,23 @@ PUBLIC int msg_receive(PROCESS *current, int src, MESSAGE *m)
 
 	int copied = 0;
 
+	/* 有中断需要处理，并且准备好要处理了 */
+	if ((receiver->has_int_msg) &&
+	    ((src == ANY) || (src == INTERRUPT))) {
+
+		MESSAGE msg;
+		memset(&msg, 0, sizeof(MESSAGE));
+		msg.source = INTERRUPT;
+		msg.type = HARD_INT;
+
+		memcpy(va2la(proc2pid(receiver), m), &msg,
+			  sizeof(MESSAGE));
+
+		receiver->has_int_msg = 0;
+
+		return 0;
+	}
+
 	if (src == ANY) { // 从任意进程接收消息
 		if (receiver->q_sending) { // 选择发送队列的第一个
 			p_from = receiver->q_sending;
@@ -131,7 +148,7 @@ PUBLIC int msg_receive(PROCESS *current, int src, MESSAGE *m)
 				(p_from->p_sendto == proc2pid(receiver))) {
 			copied = 1;
 
-			PROCESS *p = receiver->q_sending; // 此时队列必不为空？？？
+			PROCESS *p = receiver->q_sending; // 此时队列必不为空!!!
 			while (p) {
 				if (proc2pid(p) == src)
 					break;

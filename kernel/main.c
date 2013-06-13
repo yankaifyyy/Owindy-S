@@ -121,8 +121,8 @@ PUBLIC int kernel_main()
 		p_proc->q_sending = 0;
 		p_proc->next_sending = 0;
 
-		//p_proc->parent = NO_TASK;
-		//p_proc->has_int_msg = 0;
+		p_proc->p_parent = NO_TASK;
+		p_proc->has_int_msg = 0;
 
 		p_task_stack -= p_task->stacksize;
 	}
