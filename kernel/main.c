@@ -174,9 +174,13 @@ PUBLIC void Init()
 
 	if (pid != 0) {
 		kprintf("\n<===========parent is running, child pid:%d===========>\n", pid);
+		int status;
+		wait(&status);
+		kprintf("\n<========one of my child exits with status:%d=========>\n", status);
 	} 
 	else {
 		kprintf("\n<==============child is running, pid:%d===============>\n", p_proc_ready - proc_table);
+		exit(7);
 	}
 
 	while (1) {}

@@ -85,7 +85,7 @@ typedef struct s_tss {
 #define	DA_32		0x4000	// 32位段
 #define	DA_LIMIT_4K	0x8000	// 段界限粒度为4K字节
 
-#define	LIMIT_4K_SHIFT 12   // <<<<<<<<<<
+#define	LIMIT_4K_SHIFT 12   // 短接线粒度偏移
 
 #define	DA_DPL0		0x00	// DPL = 0
 #define	DA_DPL1		0x20	// DPL = 1
@@ -201,7 +201,6 @@ typedef struct s_tss {
 #define TASK_SYS 0
 #define TASK_TTY 1
 #define TASK_MM  2
-
 #define INIT     3
 
 #define ANY (NR_TASK_PROCS + 10)

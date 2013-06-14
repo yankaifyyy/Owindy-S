@@ -1,6 +1,6 @@
 //
 //-----------------------------------------------------------------
-//                            exit.c
+//                          waitexit.c
 //-----------------------------------------------------------------
 //
 
@@ -32,13 +32,15 @@ PUBLIC int wait(int *status)
 	return (msg.PID == NO_TASK ? -1 : msg.PID);
 }
 
-PUBLIC void cleanup(struct proc *proc)
+PRIVATE void cleanup(struct proc *proc)
 {
 	MESSAGE msg2parent;
 	msg2parent.type = SYSCALL_RET;
 	msg2parent.PID = proc2pid(proc);
 	msg2parent.STATUS = proc->exit_status;
-	send_recv(SEND, proc->p_parent, &msg2parent); // 给父进程发送消息
+
+	/* 当前进程是task_mm, 给调用者的父进程发送消息，解除阻塞 */
+	send_recv(SEND, proc->p_parent, &msg2parent);
 
 	proc->p_flags = EMPTY;
 }
@@ -85,8 +87,8 @@ PUBLIC void do_wait()
 
 	int i;
 	int children = 0;
-	struct proc* p_proc = proc_table;
-	for (i = 0; i < NR_TASKS + NR_PROCS; i++,p_proc++) {
+	PROCESS* p_proc = proc_table;
+	for (i = 0; i < NR_TASK_PROCS; i++, p_proc++) {
 		if (p_proc->p_parent == pid) {
 			children++;
 			if (p_proc->p_flags & HANGING) {
@@ -99,7 +101,7 @@ PUBLIC void do_wait()
 	if (children) {
 		proc_table[pid].p_flags |= WAITING;
 	}
-	else {
+	else { // 没有子进程，task_mm发消息给调用者，解除阻塞
 		MESSAGE msg;
 		msg.type = SYSCALL_RET;
 		msg.PID = NO_TASK;

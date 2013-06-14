@@ -69,6 +69,10 @@ PUBLIC int msg_send(PROCESS *current, int dest, MESSAGE *m)
 
 	PROCESS *sender = current;
 	PROCESS *p_dest = proc_table + dest;
+
+	if (proc2pid(sender) == dest) {
+		kprintf("A proc can not send msg to itself!");
+	}
 	
 	if ((p_dest->p_flags & RECEIVING) && // dest在等待接收消息
 		(p_dest->p_recvfrom == proc2pid(sender) ||   
@@ -115,6 +119,10 @@ PUBLIC int msg_receive(PROCESS *current, int src, MESSAGE *m)
 	PROCESS *receiver = current;
 	PROCESS *p_from = 0;
 	PROCESS *prev = 0;
+
+	if (proc2pid(receiver) == src) {
+		kprintf("A proc can not receive msg from itself!");
+	}
 
 	int copied = 0;
 
